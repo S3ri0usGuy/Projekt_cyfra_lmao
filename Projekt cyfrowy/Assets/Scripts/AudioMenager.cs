@@ -9,6 +9,11 @@ public class AudioMenager : MonoBehaviour
     [Header("Audio clips")]
     public AudioClip background;
     public AudioClip click;
+    public AudioClip damage;
+    public AudioClip death;
+    public AudioClip hit;
+    public AudioClip kill;
+    public AudioClip fireBallPop;
 
     private void Start()
     {
@@ -20,5 +25,10 @@ public class AudioMenager : MonoBehaviour
     public void PlayClickSound()
     {
         SFXSource.Play();
+    }
+
+    public void PlaySFX(AudioClip clip)
+    {
+        SFXSource.PlayOneShot(clip);
     }
 }
