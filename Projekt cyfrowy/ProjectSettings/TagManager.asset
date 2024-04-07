@@ -8,6 +8,7 @@ TagManager:
   - Audio
   - Fireball
   - Ranged Enemy
+  - Waister
   layers:
   - Default
   - TransparentFX

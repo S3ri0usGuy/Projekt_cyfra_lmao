@@ -2115,6 +2115,11 @@ MonoBehaviour:
   SFXSource: {fileID: 1797588450}
   background: {fileID: 8300000, guid: 4559935c00ef8e94b846e2e03e39f0d0, type: 3}
   click: {fileID: 8300000, guid: 5f0073602bc857647be81026bd503f09, type: 3}
+  damage: {fileID: 0}
+  death: {fileID: 0}
+  hit: {fileID: 0}
+  kill: {fileID: 0}
+  fireBallPop: {fileID: 0}
 --- !u!4 &1366438351
 Transform:
   m_ObjectHideFlags: 0
@@ -2730,8 +2735,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 222}
-  m_SizeDelta: {x: 912.1833, y: 219.6822}
+  m_AnchoredPosition: {x: 0, y: 202}
+  m_SizeDelta: {x: 1130.6829, y: 187.4447}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1716832299
 MonoBehaviour:
@@ -2753,7 +2758,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Project A
+  m_text: Projekt cyfrowy
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
@@ -2780,7 +2785,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 196.6
+  m_fontSize: 145.9
   m_fontSizeBase: 80
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2887,7 +2892,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Version: alfa 0.0.1'
+  m_text: 'Version: alfa 0.0.2'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

@@ -78,7 +78,7 @@ public class EnemyAi : MonoBehaviour
     {
         projecttileSpawnPosition = rb.position;
         Instantiate(missile, projecttileSpawnPosition, emptyQuaternion);
-        Debug.Log("Shoot!");
+        //Debug.Log("Shoot!");
         canDoSomething = true;
     }
 
@@ -98,7 +98,7 @@ public class EnemyAi : MonoBehaviour
             curentMovementSpeed = 0;
             canDoSomething = false;
             Invoke(nameof(Shoot), attackCooldown);
-            Debug.Log("Preparing shoot...");
+            //Debug.Log("Preparing shoot...");
         }
         else
         {
