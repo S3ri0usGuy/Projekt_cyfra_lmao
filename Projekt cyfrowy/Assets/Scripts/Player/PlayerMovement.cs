@@ -13,35 +13,43 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D _rigidbody;
     private Animator _animator;
+    private DialogsScript dialogsScript;
 
     private const string _horizontal = "Horizontal";
     private const string _vertical = "Vertical";
 
     private WeponParent weponParent;
 
-    [SerializeField] private InputActionReference movement, attack, pointerPosition;
+    [SerializeField] private InputActionReference movement, attack, pointerPosition, talk;
 
     private void OnEnable()
     {
         attack.action.performed += PerformAttack;
+        talk.action.performed += PerformTalking;
     }
 
     private void OnDisable()
     {
         attack.action.performed -= PerformAttack;
+        talk.action.performed -= PerformTalking;
     }
 
     private void PerformAttack(InputAction.CallbackContext obj)
     {
         weponParent.Attack();
     }
+    private void PerformTalking(InputAction.CallbackContext obj)
+    {
+        dialogsScript.Talk();
+    }
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
+        dialogsScript = GameObject.FindGameObjectWithTag("NPC").GetComponent<DialogsScript>();
         weponParent = GetComponentInChildren<WeponParent>();
-}
+    }
 
     private void Update()
     {

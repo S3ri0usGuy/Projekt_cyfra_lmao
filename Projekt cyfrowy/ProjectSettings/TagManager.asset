@@ -9,6 +9,7 @@ TagManager:
   - Fireball
   - Ranged Enemy
   - Waister
+  - NPC
   layers:
   - Default
   - TransparentFX
