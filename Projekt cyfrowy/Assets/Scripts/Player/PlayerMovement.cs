@@ -17,8 +17,6 @@ public class PlayerMovement : MonoBehaviour
     private const string _horizontal = "Horizontal";
     private const string _vertical = "Vertical";
 
-    private bool flipped = false;
-
     private WeponParent weponParent;
 
     [SerializeField] private InputActionReference movement, attack, pointerPosition;
@@ -43,7 +41,7 @@ public class PlayerMovement : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         weponParent = GetComponentInChildren<WeponParent>();
-    }
+}
 
     private void Update()
     {
@@ -53,27 +51,17 @@ public class PlayerMovement : MonoBehaviour
 
         _movement.Set(InputManager.movement.x, InputManager.movement.y);
 
-        _rigidbody.velocity = _movement * _moveSpeed;
+        if(_movement.x == 0 &&  _movement.y == 0)
+            _animator.SetBool("IsMoving", false);
+        else
+            _animator.SetBool("IsMoving", true);
 
-        _animator.SetFloat(_horizontal, _movement.x);
-        _animator.SetFloat(_vertical, _movement.y);
+        _rigidbody.velocity = _movement * _moveSpeed;
 
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        if(mousePos.x < transform.position.x && !flipped)
-        {
-            flip();
-        }
-        else if(mousePos.x > transform.position.x && flipped)
-        {
-            flip();
-        }
-    }
-
-    private void flip()
-    {
-        flipped = !flipped;
-        transform.Rotate(0f, 180f, 0f);
+        _animator.SetFloat(_horizontal, (mousePos.x - transform.position.x) / 100);
+        _animator.SetFloat(_vertical, (mousePos.y - transform.position.y) / 100);
     }
 
     private Vector2 GetPointerInput()

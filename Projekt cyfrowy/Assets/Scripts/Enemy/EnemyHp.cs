@@ -20,7 +20,7 @@ public class EnemyHp : MonoBehaviour
     private void Awake()
     {
         AudioMenager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioMenager>();
-        enemyAi = GameObject.FindGameObjectWithTag("Ranged Enemy").GetComponent<EnemyAi>();
+        enemyAi = GetComponent<EnemyAi>();
         currentHealth = maxHealth;
     }
 

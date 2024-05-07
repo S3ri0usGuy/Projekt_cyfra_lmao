@@ -13,6 +13,8 @@ public class WeponParent : MonoBehaviour
     public float delay = 0.3f;
     private bool attackBlocked;
 
+    public bool isRange = false;
+
     public bool IsAttacking { get; private set; }
 
     public void ResetIsAttacking()
@@ -76,6 +78,18 @@ public class WeponParent : MonoBehaviour
     }
 
     public void DetectColliders()
+    {
+        foreach (Collider2D collider in Physics2D.OverlapCircleAll(circleOrigin.position, radius))
+        {
+            EnemyHp enemyHp;
+            if (enemyHp = collider.GetComponent<EnemyHp>())
+            {
+                enemyHp.GetHit(1, transform.parent.gameObject);
+            }
+        }
+    }
+
+    public void Shoot()
     {
         foreach (Collider2D collider in Physics2D.OverlapCircleAll(circleOrigin.position, radius))
         {
