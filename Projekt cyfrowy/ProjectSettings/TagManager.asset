@@ -10,6 +10,8 @@ TagManager:
   - Ranged Enemy
   - Waister
   - NPC
+  - Night Filter
+  - Arrow
   layers:
   - Default
   - TransparentFX

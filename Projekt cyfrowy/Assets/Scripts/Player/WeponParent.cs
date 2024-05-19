@@ -1,11 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Xml.Serialization;
 using UnityEngine;
 
 public class WeponParent : MonoBehaviour
 {
+    Quaternion emptyQuaternion;
+    Vector3 projecttileSpawnPosition;
+    [SerializeField] private GameObject missile;
+
     public SpriteRenderer characterRenderer, weaponRenderer;
     public Vector2 PointerPosition { get; set; }
 
@@ -24,7 +29,6 @@ public class WeponParent : MonoBehaviour
 
     public Transform circleOrigin;
     public float radius;
-
 
     private void Update()
     {
@@ -91,13 +95,7 @@ public class WeponParent : MonoBehaviour
 
     public void Shoot()
     {
-        foreach (Collider2D collider in Physics2D.OverlapCircleAll(circleOrigin.position, radius))
-        {
-            EnemyHp enemyHp;
-            if (enemyHp = collider.GetComponent<EnemyHp>())
-            {
-                enemyHp.GetHit(1, transform.parent.gameObject);
-            }
-        }
+        projecttileSpawnPosition = transform.position;
+        Instantiate(missile, projecttileSpawnPosition, emptyQuaternion);
     }
 }

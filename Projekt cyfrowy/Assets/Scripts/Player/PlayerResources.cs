@@ -21,6 +21,7 @@ public class PlayerResources : MonoBehaviour
     private float nightTimeLeft;
 
     AudioMenager AudioMenager;
+    [SerializeField] GameObject nightTimeFilter;
 
     private void Awake()
     {
@@ -36,10 +37,8 @@ public class PlayerResources : MonoBehaviour
         {
             ActionsText.text = "Actions: " + actions + " / " + baseActions;
         }
-        else
-        {
-            isNight = true;
-        }
+
+        nightTimeFilter.SetActive(isNight);
     }
 
     private void Update()
@@ -59,6 +58,7 @@ public class PlayerResources : MonoBehaviour
                 actions = baseActions;
                 ActionsText.text = "Actions: " + actions + " / " + baseActions;
             }
+            nightTimeFilter.SetActive(isNight);
         }
     }
 
