@@ -7,31 +7,37 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float _moveSpeed;
+    [SerializeField] public float _moveSpeed;
 
     private Vector2 pointerInput, _movement;
 
     private Rigidbody2D _rigidbody;
     private Animator _animator;
+    private WeponParent weponParent;
     private DialogsScript dialogsScript;
+    private Abilities abilities;
 
     private const string _horizontal = "Horizontal";
     private const string _vertical = "Vertical";
 
-    private WeponParent weponParent;
-
-    [SerializeField] private InputActionReference movement, attack, pointerPosition, talk;
+    [SerializeField] private InputActionReference movement, attack, pointerPosition, talk, ability1, ability2, ability3;
 
     private void OnEnable()
     {
         attack.action.performed += PerformAttack;
         talk.action.performed += PerformTalking;
+        ability1.action.performed += PerformAbility1;
+        ability2.action.performed += PerformAbility2;
+        ability3.action.performed += PerformAbility3;
     }
 
     private void OnDisable()
     {
         attack.action.performed -= PerformAttack;
         talk.action.performed -= PerformTalking;
+        ability1.action.performed -= PerformAbility1;
+        ability2.action.performed -= PerformAbility2;
+        ability3.action.performed -= PerformAbility3;
     }
 
     private void PerformAttack(InputAction.CallbackContext obj)
@@ -42,6 +48,18 @@ public class PlayerMovement : MonoBehaviour
     {
         dialogsScript.Talk();
     }
+    private void PerformAbility1(InputAction.CallbackContext obj)
+    {
+        abilities.Ability1();
+    }
+    private void PerformAbility2(InputAction.CallbackContext obj)
+    {
+        abilities.Ability2();
+    }
+    private void PerformAbility3(InputAction.CallbackContext obj)
+    {
+        abilities.Ability3();
+    }
 
     private void Awake()
     {
@@ -49,6 +67,7 @@ public class PlayerMovement : MonoBehaviour
         _animator = GetComponent<Animator>();
         dialogsScript = GameObject.FindGameObjectWithTag("NPC").GetComponent<DialogsScript>();
         weponParent = GetComponentInChildren<WeponParent>();
+        abilities = GameObject.FindGameObjectWithTag("Player").GetComponent<Abilities>();
     }
 
     private void Update()
