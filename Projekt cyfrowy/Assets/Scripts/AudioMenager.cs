@@ -14,6 +14,7 @@ public class AudioMenager : MonoBehaviour
     public AudioClip hit;
     public AudioClip kill;
     public AudioClip fireBallPop;
+    public AudioClip barrierBrake;
 
     private void Start()
     {

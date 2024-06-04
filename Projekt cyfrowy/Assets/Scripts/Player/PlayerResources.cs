@@ -23,9 +23,14 @@ public class PlayerResources : MonoBehaviour
     AudioMenager AudioMenager;
     [SerializeField] GameObject nightTimeFilter;
 
+    public bool berrierIsActive;
+
+    private Abilities abilities;
+
     private void Awake()
     {
         AudioMenager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioMenager>();
+        abilities = GameObject.FindGameObjectWithTag("Player").GetComponent<Abilities>();
 
         hp = baseHp;
         HpText.text = "HP: " + hp + " / " + baseHp;
@@ -64,13 +69,21 @@ public class PlayerResources : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        hp-= damage;
-        AudioMenager.PlaySFX(AudioMenager.damage);
-        HpText.text = "HP: " + hp + " / " + baseHp;
-        if (hp <= 0)
+        if (berrierIsActive)
         {
-            AudioMenager.PlaySFX(AudioMenager.death);
-            Invoke(nameof(RestartGame), 1f);
+            abilities.RemoveBarrier();
+            AudioMenager.PlaySFX(AudioMenager.barrierBrake);
+        }
+        else
+        {
+            hp -= damage;
+            AudioMenager.PlaySFX(AudioMenager.damage);
+            HpText.text = "HP: " + hp + " / " + baseHp;
+            if (hp <= 0)
+            {
+                AudioMenager.PlaySFX(AudioMenager.death);
+                Invoke(nameof(RestartGame), 1f);
+            }
         }
     }
 

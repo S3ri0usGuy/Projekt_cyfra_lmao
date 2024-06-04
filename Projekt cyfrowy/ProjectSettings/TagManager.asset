@@ -12,6 +12,7 @@ TagManager:
   - NPC
   - Night Filter
   - Arrow
+  - Barrier
   layers:
   - Default
   - TransparentFX
