@@ -20,7 +20,10 @@ public class PlayerMovement : MonoBehaviour
     private const string _horizontal = "Horizontal";
     private const string _vertical = "Vertical";
 
-    [SerializeField] private InputActionReference movement, attack, pointerPosition, talk, ability1, ability2, ability3;
+    [SerializeField] private InputActionReference movement, attack, pointerPosition, talk, ability1, ability2, ability3, switchWeapon;
+
+    public float weaponChangeCooldownTime;
+    public float lastAttackTime;
 
     private void OnEnable()
     {
@@ -29,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
         ability1.action.performed += PerformAbility1;
         ability2.action.performed += PerformAbility2;
         ability3.action.performed += PerformAbility3;
+        switchWeapon.action.performed += PerformSwitchWeapon;
     }
 
     private void OnDisable()
@@ -38,12 +42,22 @@ public class PlayerMovement : MonoBehaviour
         ability1.action.performed -= PerformAbility1;
         ability2.action.performed -= PerformAbility2;
         ability3.action.performed -= PerformAbility3;
+        switchWeapon.action.performed -= PerformSwitchWeapon;
     }
 
-    private void PerformAttack(InputAction.CallbackContext obj)
+    public void PerformAttack(InputAction.CallbackContext context)
     {
-        weponParent.Attack();
+        if (weponParent.gameObject.activeInHierarchy)
+        {
+            weponParent.Attack();
+            lastAttackTime = Time.time;
+        }
+        else
+        {
+            Debug.LogWarning("WeponParent is inactive!");
+        }
     }
+
     private void PerformTalking(InputAction.CallbackContext obj)
     {
         dialogsScript.Talk();
@@ -60,13 +74,17 @@ public class PlayerMovement : MonoBehaviour
     {
         abilities.Ability3();
     }
+    private void PerformSwitchWeapon(InputAction.CallbackContext obj)
+    {
+        abilities.SwitchWeapon();
+    }
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         dialogsScript = GameObject.FindGameObjectWithTag("NPC").GetComponent<DialogsScript>();
-        weponParent = GetComponentInChildren<WeponParent>();
+        SetNewWepon();
         abilities = GameObject.FindGameObjectWithTag("Player").GetComponent<Abilities>();
     }
 
@@ -96,5 +114,10 @@ public class PlayerMovement : MonoBehaviour
         Vector3 mousePos = pointerPosition.action.ReadValue<Vector2>();
         mousePos.z = Camera.main.nearClipPlane;
         return Camera.main.ScreenToWorldPoint(mousePos);
+    }
+
+    public void SetNewWepon()
+    {
+        weponParent = GetComponentInChildren<WeponParent>();
     }
 }

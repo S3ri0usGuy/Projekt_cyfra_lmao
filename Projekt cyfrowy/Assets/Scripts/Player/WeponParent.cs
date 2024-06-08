@@ -16,7 +16,7 @@ public class WeponParent : MonoBehaviour
 
     public Animator animator;
     public float delay = 0.3f;
-    private bool attackBlocked;
+    public bool attackBlocked;
 
     public bool isRange = false;
 
@@ -88,7 +88,7 @@ public class WeponParent : MonoBehaviour
             EnemyHp enemyHp;
             if (enemyHp = collider.GetComponent<EnemyHp>())
             {
-                enemyHp.GetHit(1, transform.parent.gameObject);
+                enemyHp.GetHit(2, transform.parent.gameObject, true);
             }
         }
     }

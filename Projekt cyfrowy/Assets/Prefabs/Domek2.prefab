@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6692809205010781344}
   - component: {fileID: 310407078762162612}
   - component: {fileID: 2361848427664555213}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Domek2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -13,6 +13,7 @@ TagManager:
   - Night Filter
   - Arrow
   - Barrier
+  - Wepon
   layers:
   - Default
   - TransparentFX

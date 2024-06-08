@@ -23,27 +23,37 @@ public class PlayerResources : MonoBehaviour
     AudioMenager AudioMenager;
     [SerializeField] GameObject nightTimeFilter;
 
-    public bool berrierIsActive;
+    public bool barrierIsActive;
+
+    [SerializeField] private GameObject hp1, hp2, hp3, hp4, hp5;
+    [SerializeField] private GameObject pointer, dayClock, nightClock;
+    private Vector3 targetRotation;
 
     private Abilities abilities;
+
+    SpriteRenderer spriteRenderer;
+    [SerializeField] private float getHitAnimationTime;
+
+    public float knockbackForce;
+    public float knockbackForceForRangedEnemies;
 
     private void Awake()
     {
         AudioMenager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioMenager>();
         abilities = GameObject.FindGameObjectWithTag("Player").GetComponent<Abilities>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
         hp = baseHp;
-        HpText.text = "HP: " + hp + " / " + baseHp;
 
         nightTimeLeft = nightTime;
         actions = baseActions;
 
         if (!isNight)
         {
-            ActionsText.text = "Actions: " + actions + " / " + baseActions;
+            ChangeAction();
         }
 
-        nightTimeFilter.SetActive(isNight);
+        changeTimeOfDay();
     }
 
     private void Update()
@@ -53,23 +63,23 @@ public class PlayerResources : MonoBehaviour
             if (nightTimeLeft > 0)
             {
                 nightTimeLeft -= Time.deltaTime;
-                UpdateTime(nightTimeLeft);
+                UpdateTime();
             }
             else
             {
                 isNight = false;
+                changeTimeOfDay();
                 nightTimeLeft = 0;
                 nightTimeLeft = nightTime;
                 actions = baseActions;
-                ActionsText.text = "Actions: " + actions + " / " + baseActions;
+                ChangeAction();
             }
-            nightTimeFilter.SetActive(isNight);
         }
     }
 
     public void TakeDamage(int damage)
     {
-        if (berrierIsActive)
+        if (barrierIsActive)
         {
             abilities.RemoveBarrier();
             AudioMenager.PlaySFX(AudioMenager.barrierBrake);
@@ -78,12 +88,72 @@ public class PlayerResources : MonoBehaviour
         {
             hp -= damage;
             AudioMenager.PlaySFX(AudioMenager.damage);
-            HpText.text = "HP: " + hp + " / " + baseHp;
+            damageAnimation();
+            ChangeHP();
             if (hp <= 0)
             {
                 AudioMenager.PlaySFX(AudioMenager.death);
                 Invoke(nameof(RestartGame), 1f);
             }
+        }
+    }
+
+    private void ChangeHP()
+    {
+        hp1.SetActive(true);
+        hp2.SetActive(true);
+        hp3.SetActive(true);
+        hp4.SetActive(true);
+        hp5.SetActive(true);
+        if (hp <= 4)
+        {
+            hp5.SetActive(false);
+            if (hp <= 3)
+            {
+                hp4.SetActive(false);
+                if (hp <= 2)
+                {
+                    hp3.SetActive(false);
+                    if (hp <= 1)
+                    {
+                        hp2.SetActive(false);
+                        if (hp <= 0)
+                        {
+                            hp1.SetActive(false);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void damageAnimation()
+    {
+        spriteRenderer.color = new Color(1f, 0.5f, 0.5f, 1f);
+        Invoke(nameof(damageAnimationHelper), getHitAnimationTime);
+    }
+
+    private void damageAnimationHelper()
+    {
+        spriteRenderer.color = Color.white;
+    }
+
+    private void ChangeAction()
+    {
+        switch (actions)
+        {
+            case 3:
+                pointer.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 152));
+                break;
+            case 2:
+                pointer.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
+                break;
+            case 1:
+                pointer.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 27));
+                break;
+            case 0:
+                pointer.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+                break;
         }
     }
 
@@ -97,6 +167,7 @@ public class PlayerResources : MonoBehaviour
         if(amount <= actions)
         {
             actions -= amount;
+            ChangeAction();
         }
         else
         {
@@ -106,20 +177,23 @@ public class PlayerResources : MonoBehaviour
         if (actions <= 0)
         {
             isNight = true;
+            changeTimeOfDay();
         }
         else
         {
-            ActionsText.text = "Actions: " + actions + " / " + baseActions;
+            ChangeAction();
         }
     }
 
-    private void UpdateTime(float currentTime)
+    private void changeTimeOfDay()
     {
-        currentTime++;
+        nightTimeFilter.SetActive(isNight);
+        dayClock.SetActive(!isNight);
+        nightClock.SetActive(isNight);
+    }
 
-        float minutes = Mathf.FloorToInt(currentTime / 60);
-        float seconds = Mathf.FloorToInt(currentTime % 60);
-
-        ActionsText.text = "Night time remaining: " + string.Format("{0:00}:{1:00}", minutes, seconds);
+    private void UpdateTime()
+    {
+        pointer.transform.rotation = Quaternion.Euler(new Vector3(0, 0, nightTimeLeft / nightTime * 180));
     }
 }

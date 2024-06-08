@@ -1,23 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
-using UnityEngine.UIElements;
+using TMPro;
 
 public class Abilities : MonoBehaviour
 {
-    [SerializeField] private float ability1Coolodown;
-    [SerializeField] private float ability2Coolodown;
-    [SerializeField] private float ability3Coolodown;
+    [SerializeField] private float ability1Cooldown;
+    [SerializeField] private float ability2Cooldown;
+    [SerializeField] private float ability3Cooldown;
     [SerializeField] private float dashSpeed;
     [SerializeField] private float dashDistance;
     [SerializeField] private float barrierDuration;
     [SerializeField] private Transform teleportDestiny;
-    private bool abilit1IsOnCollodown, abilit2IsOnCollodown, abilit3IsOnCollodown;
+
+    [SerializeField] private TextMeshProUGUI ability1CooldownText;
+    [SerializeField] private TextMeshProUGUI ability2CooldownText;
+    [SerializeField] private TextMeshProUGUI ability3CooldownText;
+    [SerializeField] private GameObject ability1Faded;
+    [SerializeField] private GameObject ability2Faded;
+    [SerializeField] private GameObject ability3Faded;
+
+    [SerializeField] private GameObject sword;
+    [SerializeField] private GameObject bow;
+    [SerializeField] private GameObject swordInterface;
+    [SerializeField] private GameObject bowInterface;
+
+    private bool ability1IsOnCooldown, ability2IsOnCooldown, ability3IsOnCooldown, playerHasBow, playerHoldSword, canSwitch;
 
     private PlayerMovement playerMovement;
     private PlayerResources playerResources;
+    [SerializeField] private WeponParent weponParent;
+    [SerializeField] private WeponParent bowParent;
+
 
     private float baseMovementSpeed;
 
@@ -27,89 +41,149 @@ public class Abilities : MonoBehaviour
 
     void Awake()
     {
-        abilit1IsOnCollodown = false;
-        abilit2IsOnCollodown = false;
-        abilit3IsOnCollodown = false;
+        ability1IsOnCooldown = false;
+        ability2IsOnCooldown = false;
+        ability3IsOnCooldown = false;
         playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
         playerResources = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerResources>();
         baseMovementSpeed = playerMovement._moveSpeed;
         barrier = GameObject.FindGameObjectWithTag("Barrier");
         barrier.SetActive(false);
+
+        ability1CooldownText.text = "";
+        ability2CooldownText.text = "";
+        ability3CooldownText.text = "";
+        ability1Faded.SetActive(false);
+        ability2Faded.SetActive(false);
+        ability3Faded.SetActive(false);
+
+        playerHasBow = true;
+
+        playerHoldSword = true;
+        bow.SetActive(!playerHoldSword);
+        bowInterface.SetActive(!playerHoldSword);
     }
 
     public void ResetAbility1Cooldown()
     {
-        abilit1IsOnCollodown = false;
+        ability1IsOnCooldown = false;
+        ability1Faded.SetActive(false);
+        ability1CooldownText.text = "";
     }
 
     public void ResetAbility2Cooldown()
     {
-        abilit2IsOnCollodown = false;
+        ability2IsOnCooldown = false;
+        ability2Faded.SetActive(false);
+        ability2CooldownText.text = "";
     }
+
     public void ResetAbility3Cooldown()
     {
-        abilit3IsOnCollodown = false;
+        ability3IsOnCooldown = false;
+        ability3Faded.SetActive(false);
+        ability3CooldownText.text = "";
     }
 
     public void Ability1()
     {
-        if (!abilit1IsOnCollodown)
+        if (!ability1IsOnCooldown)
         {
             movementSpeedBoost();
-            abilit1IsOnCollodown = true;
-            Invoke("ResetAbility1Cooldown", ability1Coolodown);
+            ability1IsOnCooldown = true;
+            ability1Faded.SetActive(true);
+            StartCoroutine(StartCooldown(ability1Cooldown, ability1CooldownText, ResetAbility1Cooldown));
         }
     }
 
     public void Ability2()
     {
-        if (!abilit2IsOnCollodown)
+        if (!ability2IsOnCooldown)
         {
             castBarrier();
-            abilit2IsOnCollodown = true;
+            ability2IsOnCooldown = true;
+            ability2Faded.SetActive(true);
+            StartCoroutine(StartCooldown(ability2Cooldown + barrierDuration, ability2CooldownText, ResetAbility2Cooldown));
         }
     }
 
     public void Ability3()
     {
-        if (!abilit3IsOnCollodown)
+        if (!ability3IsOnCooldown)
         {
             animator.SetTrigger("StartTeleport");
-            abilit3IsOnCollodown = true;
-            Invoke("ResetAbility3Cooldown", ability3Coolodown);
+            ability3IsOnCooldown = true;
+            ability3Faded.SetActive(true);
+            StartCoroutine(StartCooldown(ability3Cooldown, ability3CooldownText, ResetAbility3Cooldown));
+        }
+    }
+
+    public void SwitchWeapon()
+    {
+        if (playerHasBow && Time.time - playerMovement.lastAttackTime >= playerMovement.weaponChangeCooldownTime)
+        {
+            sword.SetActive(!playerHoldSword);
+            bow.SetActive(playerHoldSword);
+            swordInterface.SetActive(!playerHoldSword);
+            bowInterface.SetActive(playerHoldSword);
+            playerHoldSword = !playerHoldSword;
+            playerMovement.SetNewWepon();
+            weponParent.attackBlocked = false;
+            bowParent.attackBlocked = false;
+        }
+        else if(canSwitch)
+        {
+            canSwitch = false;
+            Invoke("SwitchWeapon", playerMovement.weaponChangeCooldownTime - (Time.time - playerMovement.lastAttackTime) + 0.03f);
         }
     }
 
     private void movementSpeedBoost()
     {
         playerMovement._moveSpeed = dashSpeed;
-        Invoke("ResterMovementSpeed", dashDistance);
+        Invoke("ResetMovementSpeed", dashDistance);
     }
 
-    private void ResterMovementSpeed()
+    private void ResetMovementSpeed()
     {
         playerMovement._moveSpeed = baseMovementSpeed;
     }
 
     private void castBarrier()
     {
-        playerResources.berrierIsActive = true;
+        playerResources.barrierIsActive = true;
         barrier.SetActive(true);
         Invoke("RemoveBarrier", barrierDuration);
     }
 
     public void RemoveBarrier()
     {
-        if (playerResources.berrierIsActive)
+        if (playerResources.barrierIsActive)
         {
             barrier.SetActive(false);
-            playerResources.berrierIsActive = false;
-            Invoke("ResetAbility2Cooldown", ability2Coolodown);
+            playerResources.barrierIsActive = false;
         }
+    }
+
+    public void OnTeleportAnimationComplete()
+    {
+        CastTeleport();
     }
 
     private void CastTeleport()
     {
         gameObject.transform.position = teleportDestiny.position;
+    }
+
+    private IEnumerator StartCooldown(float cooldown, TextMeshProUGUI cooldownText, System.Action resetAction)
+    {
+        float remainingTime = cooldown;
+        while (remainingTime > 0)
+        {
+            cooldownText.text = remainingTime.ToString("F1");
+            remainingTime -= Time.deltaTime;
+            yield return null;
+        }
+        resetAction();
     }
 }

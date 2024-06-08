@@ -31,7 +31,7 @@ public class EnemyHp : MonoBehaviour
         isDead = false;
     }
 
-    public void GetHit(int amount, GameObject sender)
+    public void GetHit(int amount, GameObject sender, bool isDamageFromMelee)
     {
         if (isDead)
             return;
@@ -39,7 +39,7 @@ public class EnemyHp : MonoBehaviour
             return;
 
         currentHealth -= amount;
-        enemyAi.RunAway();
+        enemyAi.RunAway(isDamageFromMelee);
 
         if (currentHealth > 0)
         {

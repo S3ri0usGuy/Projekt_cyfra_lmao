@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
 using TMPro;
+using static Unity.VisualScripting.Member;
 
 public class EnemyAi : MonoBehaviour
 {
@@ -19,11 +20,10 @@ public class EnemyAi : MonoBehaviour
     [SerializeField] private float endOfSafeZone;
 
     [SerializeField] private GameObject missile;
+    [SerializeField] private float attackCastTime;
     [SerializeField] private float attackCooldown;
     private bool canDoSomething = true;
-
-    [SerializeField] private int movementSpeedBoost;
-    private int currentMovementSpeedBoost = 1;
+    private bool canShoot = true;
 
     private int curentMovementSpeed;
     private float distanceFromTarget;
@@ -40,6 +40,12 @@ public class EnemyAi : MonoBehaviour
     Seeker seeker;
     Rigidbody2D rb;
 
+    public Transform source;
+    private Vector2 force;
+    private Vector2 direction;
+
+    private PlayerResources playerResources;
+
     private void Awake()
     {
         curentMovementSpeed = movementSpeed;
@@ -48,6 +54,9 @@ public class EnemyAi : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         InvokeRepeating(nameof(UpdatePath), 0f, .1f);
+
+        playerResources = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerResources>();
+        source = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void UpdatePath()
@@ -82,6 +91,11 @@ public class EnemyAi : MonoBehaviour
         canDoSomething = true;
     }
 
+    void LetShootAgain()
+    {
+        canShoot = true;
+    }
+
     private void FixedUpdate()
     {
         distanceFromTarget = Vector2.Distance(transform.position, target.position);
@@ -89,15 +103,17 @@ public class EnemyAi : MonoBehaviour
         if(canDoSomething && ((!isChasing && distanceFromTarget < baseTriggerDistance) || (isChasing && distanceFromTarget < chasingTriggerDistance))
             && !(isRanged && distanceFromTarget > runAwayZone && distanceFromTarget <= endOfSafeZone))
         {
-            curentMovementSpeed = movementSpeed * currentMovementSpeedBoost;
+            curentMovementSpeed = movementSpeed;
             isChasing = true;
         }
-        else if (isRanged && canDoSomething && distanceFromTarget <= endOfSafeZone)
+        else if (isRanged && canShoot && distanceFromTarget <= endOfSafeZone)
         {
             isChasing = false;
             curentMovementSpeed = 0;
             canDoSomething = false;
-            Invoke(nameof(Shoot), attackCooldown);
+            canShoot = false;
+            Invoke(nameof(Shoot), attackCastTime);
+            Invoke(nameof(LetShootAgain), attackCastTime + attackCooldown);
             //Debug.Log("Preparing shoot...");
         }
         else
@@ -131,17 +147,13 @@ public class EnemyAi : MonoBehaviour
         }
     }
 
-    public void RunAway()
+    public void RunAway(bool isDamageFromMelee)
     {
-        if(isRanged && distanceFromTarget <= runAwayZone)
+        if (isDamageFromMelee || (isRanged && distanceFromTarget <= runAwayZone))
         {
-            currentMovementSpeedBoost = movementSpeedBoost;
-            Invoke(nameof(RemoveSpeedBoost), 0.2f);
+            direction = (transform.position - source.position).normalized;
+            force = direction * playerResources.knockbackForce;
+            gameObject.GetComponent<Rigidbody2D>().AddForce(force);
         }
-    }
-
-    public void RemoveSpeedBoost()
-    {
-        currentMovementSpeedBoost = 1;
     }
 }

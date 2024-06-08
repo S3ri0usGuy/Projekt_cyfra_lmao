@@ -59,11 +59,11 @@ public class ProjectilesScript : MonoBehaviour
                 EnemyHp enemyHp = collision.gameObject.GetComponent<EnemyHp>();
                 if (enemyHp != null)
                 {
-                    enemyHp.GetHit(dmg, GameObject.FindGameObjectWithTag("Player"));
+                    enemyHp.GetHit(dmg, GameObject.FindGameObjectWithTag("Player"), false);
                     force = direction * knockbackForce;
+                    Debug.Log("Arrow: " + force);
                     collision.gameObject.GetComponent<Rigidbody2D>().AddForce(force);
                 }
-                Debug.Log("Przeciwnik to: " + enemyHp);
             }
         }
         AudioMenager.PlaySFX(AudioMenager.fireBallPop);

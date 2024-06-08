@@ -138,7 +138,7 @@ MonoBehaviour:
   speed: 700
   dmg: 1
   lifeTime: 0.55
-  knockbackForce: -100
+  knockbackForce: 0
 --- !u!50 &1052679258211309699
 Rigidbody2D:
   serializedVersion: 4
