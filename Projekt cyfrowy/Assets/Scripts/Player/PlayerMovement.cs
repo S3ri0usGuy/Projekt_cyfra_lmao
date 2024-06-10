@@ -14,13 +14,13 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private Animator _animator;
     private WeponParent weponParent;
-    private DialogsScript dialogsScript;
+    private PlayerDialogsScript playerDialogsScript;
     private Abilities abilities;
 
     private const string _horizontal = "Horizontal";
     private const string _vertical = "Vertical";
 
-    [SerializeField] private InputActionReference movement, attack, pointerPosition, talk, ability1, ability2, ability3, switchWeapon;
+    [SerializeField] private InputActionReference movement, attack, pointerPosition, talk, ability1, ability2, ability3, switchWeapon, togglePause;
 
     public float weaponChangeCooldownTime;
     public float lastAttackTime;
@@ -33,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
         ability2.action.performed += PerformAbility2;
         ability3.action.performed += PerformAbility3;
         switchWeapon.action.performed += PerformSwitchWeapon;
+        togglePause.action.performed += TogglePause;
     }
 
     private void OnDisable()
@@ -43,6 +44,7 @@ public class PlayerMovement : MonoBehaviour
         ability2.action.performed -= PerformAbility2;
         ability3.action.performed -= PerformAbility3;
         switchWeapon.action.performed -= PerformSwitchWeapon;
+        togglePause.action.performed -= TogglePause;
     }
 
     public void PerformAttack(InputAction.CallbackContext context)
@@ -60,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void PerformTalking(InputAction.CallbackContext obj)
     {
-        dialogsScript.Talk();
+        playerDialogsScript.Talk();
     }
     private void PerformAbility1(InputAction.CallbackContext obj)
     {
@@ -78,12 +80,16 @@ public class PlayerMovement : MonoBehaviour
     {
         abilities.SwitchWeapon();
     }
+    private void TogglePause(InputAction.CallbackContext obj)
+    {
+        abilities.TogglePause();
+    }
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
-        dialogsScript = GameObject.FindGameObjectWithTag("NPC").GetComponent<DialogsScript>();
+        playerDialogsScript = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerDialogsScript>();
         SetNewWepon();
         abilities = GameObject.FindGameObjectWithTag("Player").GetComponent<Abilities>();
     }

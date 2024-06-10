@@ -8,16 +8,11 @@ using UnityEngine.SceneManagement;
 
 public class PlayerResources : MonoBehaviour
 {
-    [SerializeField] int baseHp;
-    int hp;
-    [SerializeField] TextMeshProUGUI HpText;
+    [SerializeField] int baseHp, baseActions;
+    int hp, actions;
 
-    [SerializeField] int baseActions;
-    int actions;
-    [SerializeField] TextMeshProUGUI ActionsText;
-
-    [SerializeField] private bool isNight = false;
-    [SerializeField] private float nightTime = 10;
+    public bool isNight = false;
+    [SerializeField] private float nightTime;
     private float nightTimeLeft;
 
     AudioMenager AudioMenager;
@@ -37,11 +32,27 @@ public class PlayerResources : MonoBehaviour
     public float knockbackForce;
     public float knockbackForceForRangedEnemies;
 
+    [SerializeField] private TextMeshProUGUI dayCounter;
+    public int day;
+
+    private fountainHp fountainHp;
+
+    [SerializeField] private GameObject questsField, fountainHpField;
+
+    [SerializeField] private float repelRadius;
+    [SerializeField] private float repelForce;
+
     private void Awake()
     {
         AudioMenager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioMenager>();
         abilities = GameObject.FindGameObjectWithTag("Player").GetComponent<Abilities>();
+        fountainHp = GameObject.FindGameObjectWithTag("Fountain").GetComponent<fountainHp>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (PlayerPrefs.HasKey("Day"))
+        {
+            day = PlayerPrefs.GetInt("Day");
+        }
 
         hp = baseHp;
 
@@ -98,6 +109,14 @@ public class PlayerResources : MonoBehaviour
         }
     }
 
+    private void HealDamage(int amount)
+    {
+        hp += amount;
+        if (hp > 5) hp = 5;
+        healAnimation();
+        ChangeHP();
+    }
+
     private void ChangeHP()
     {
         hp1.SetActive(true);
@@ -133,6 +152,12 @@ public class PlayerResources : MonoBehaviour
         Invoke(nameof(damageAnimationHelper), getHitAnimationTime);
     }
 
+    private void healAnimation()
+    {
+        spriteRenderer.color = new Color(0.5f, 1f, 0.5f, 1f);
+        Invoke(nameof(damageAnimationHelper), getHitAnimationTime);
+    }
+
     private void damageAnimationHelper()
     {
         spriteRenderer.color = Color.white;
@@ -157,7 +182,7 @@ public class PlayerResources : MonoBehaviour
         }
     }
 
-    void RestartGame()
+    public void RestartGame()
     {
         SceneManager.LoadScene(1);
     }
@@ -190,10 +215,52 @@ public class PlayerResources : MonoBehaviour
         nightTimeFilter.SetActive(isNight);
         dayClock.SetActive(!isNight);
         nightClock.SetActive(isNight);
+        questsField.SetActive(!isNight);
+        fountainHpField.SetActive(isNight);
+        if (!isNight)
+        {
+            dayCounter.text = "Day: " + day;
+        }
+        else
+        {
+            day++;
+            dayCounter.text = "Night: " + day;
+        }
+        hp = baseHp;
+        fountainHp.hp = fountainHp.baseHp;
+        ChangeHP();
+        fountainHp.ChangeHP();
+        PlayerPrefs.SetInt("Day", day);
     }
 
     private void UpdateTime()
     {
         pointer.transform.rotation = Quaternion.Euler(new Vector3(0, 0, nightTimeLeft / nightTime * 180));
+    }
+
+    public void RepelEnemies()
+    {
+        Collider2D[] enemiesToRepel = Physics2D.OverlapCircleAll(transform.position, repelRadius);
+        foreach (var enemy in enemiesToRepel)
+        {
+            if (enemy.CompareTag("Enemy"))
+            {
+                Rigidbody2D enemyRb = enemy.GetComponent<Rigidbody2D>();
+                if (enemyRb != null)
+                {
+                    Vector2 direction = enemy.transform.position - transform.position;
+                    enemyRb.AddForce(direction.normalized * repelForce, ForceMode2D.Impulse);
+                }
+            }
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Kit"))
+        {
+            HealDamage(1);
+            Destroy(other.gameObject);
+        }
     }
 }

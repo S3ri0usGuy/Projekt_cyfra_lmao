@@ -31,6 +31,7 @@ public class Abilities : MonoBehaviour
     private PlayerResources playerResources;
     [SerializeField] private WeponParent weponParent;
     [SerializeField] private WeponParent bowParent;
+    [SerializeField] private GameObject PausePanel;
 
 
     private float baseMovementSpeed;
@@ -38,6 +39,8 @@ public class Abilities : MonoBehaviour
     private GameObject barrier;
 
     public Animator animator;
+
+    private bool isPaused = false;
 
     void Awake()
     {
@@ -136,6 +139,34 @@ public class Abilities : MonoBehaviour
             canSwitch = false;
             Invoke("SwitchWeapon", playerMovement.weaponChangeCooldownTime - (Time.time - playerMovement.lastAttackTime) + 0.03f);
         }
+    }
+
+    public void TogglePause()
+    {
+        isPaused = !isPaused;
+
+        if (isPaused)
+        {
+            PauseGame();
+
+        }
+        else
+        {
+            ResumeGame();
+
+        }
+    }
+
+    private void PauseGame()
+    {
+        Time.timeScale = 0f;
+        PausePanel.SetActive(true);
+    }
+
+    private void ResumeGame()
+    {
+        Time.timeScale = 1f;
+        PausePanel.SetActive(false);
     }
 
     private void movementSpeedBoost()

@@ -1,25 +1,27 @@
 using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class EnemyHp : MonoBehaviour
 {
-    private AudioMenager AudioMenager;
+    private AudioMenager audioMenager;
     private EnemyAi enemyAi;
+    Quaternion emptyQuaternion;
 
     [SerializeField]
     private int maxHealth, currentHealth;
 
     public UnityEvent<GameObject> OnHitWithReference, OnDeathWithReference;
 
-    [SerializeField]
     private bool isDead = false;
+    [SerializeField] private GameObject drop;
 
     private void Awake()
     {
-        AudioMenager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioMenager>();
+        audioMenager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioMenager>();
         enemyAi = GetComponent<EnemyAi>();
         currentHealth = maxHealth;
     }
@@ -43,14 +45,15 @@ public class EnemyHp : MonoBehaviour
 
         if (currentHealth > 0)
         {
-            AudioMenager.PlaySFX(AudioMenager.hit);
+            audioMenager.PlaySFX(audioMenager.hit);
             OnHitWithReference?.Invoke(sender);
         }
         else
         {
             OnDeathWithReference?.Invoke(sender);
-            AudioMenager.PlaySFX(AudioMenager.kill);
+            audioMenager.PlaySFX(audioMenager.kill);
             isDead = true;
+            Instantiate(drop, gameObject.transform.position, emptyQuaternion);
             Destroy(gameObject);
         }
     }

@@ -25,6 +25,7 @@ public class menuScript : MonoBehaviour
     }
     public void StartGame()
     {
+        PlayerPrefs.SetInt("Day", 1);
         SceneManager.LoadScene(1);
     }
 
@@ -40,6 +41,7 @@ public class menuScript : MonoBehaviour
         if (volume == 0f) volume = 0.00001f;
         myMixer.SetFloat("Main", Mathf.Log10(volume)*20);
         PlayerPrefs.SetFloat("volume", volume*100);
+        Debug.Log("Menu: " + volume);
     }
 
     public void LoadVolume()

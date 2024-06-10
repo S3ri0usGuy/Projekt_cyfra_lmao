@@ -4,10 +4,13 @@ using UnityEngine;
 using Pathfinding;
 using TMPro;
 using static Unity.VisualScripting.Member;
+using static UnityEngine.GraphicsBuffer;
+using System.Reflection;
 
 public class EnemyAi : MonoBehaviour
 {
     public Transform target;
+    private Transform fountain;
 
     Vector3 projecttileSpawnPosition;
     Quaternion emptyQuaternion;
@@ -40,7 +43,7 @@ public class EnemyAi : MonoBehaviour
     Seeker seeker;
     Rigidbody2D rb;
 
-    public Transform source;
+    private Transform player;
     private Vector2 force;
     private Vector2 direction;
 
@@ -48,15 +51,18 @@ public class EnemyAi : MonoBehaviour
 
     private void Awake()
     {
+        playerResources = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerResources>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        fountain = GameObject.FindGameObjectWithTag("Fountain").transform;
+
+        target = player;
+
         curentMovementSpeed = movementSpeed;
 
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
 
         InvokeRepeating(nameof(UpdatePath), 0f, .1f);
-
-        playerResources = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerResources>();
-        source = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void UpdatePath()
@@ -86,8 +92,14 @@ public class EnemyAi : MonoBehaviour
     void Shoot()
     {
         projecttileSpawnPosition = rb.position;
-        Instantiate(missile, projecttileSpawnPosition, emptyQuaternion);
-        //Debug.Log("Shoot!");
+        GameObject newMissile = Instantiate(missile, projecttileSpawnPosition, emptyQuaternion);
+
+        ProjectilesScript missileScript = newMissile.GetComponent<ProjectilesScript>();
+        if (missileScript != null)
+        {
+            missileScript.shooter = gameObject;
+        }
+
         canDoSomething = true;
     }
 
@@ -98,28 +110,65 @@ public class EnemyAi : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!playerResources.isNight)
+        {
+            Destroy(gameObject);
+        }
+        
+        target = player;
         distanceFromTarget = Vector2.Distance(transform.position, target.position);
 
-        if(canDoSomething && ((!isChasing && distanceFromTarget < baseTriggerDistance) || (isChasing && distanceFromTarget < chasingTriggerDistance))
-            && !(isRanged && distanceFromTarget > runAwayZone && distanceFromTarget <= endOfSafeZone))
+        if ((isChasing && distanceFromTarget > chasingTriggerDistance) || (!isChasing && distanceFromTarget > baseTriggerDistance))
         {
-            curentMovementSpeed = movementSpeed;
-            isChasing = true;
+            target = fountain;
+            distanceFromTarget = Vector2.Distance(transform.position, target.position);
         }
-        else if (isRanged && canShoot && distanceFromTarget <= endOfSafeZone)
+
+        if (target == player)
         {
-            isChasing = false;
-            curentMovementSpeed = 0;
-            canDoSomething = false;
-            canShoot = false;
-            Invoke(nameof(Shoot), attackCastTime);
-            Invoke(nameof(LetShootAgain), attackCastTime + attackCooldown);
-            //Debug.Log("Preparing shoot...");
+            if (canDoSomething && !(isRanged && distanceFromTarget > runAwayZone && distanceFromTarget <= endOfSafeZone))
+            {
+                curentMovementSpeed = movementSpeed;
+                isChasing = true;
+            }
+            else if (isRanged && canShoot && distanceFromTarget <= endOfSafeZone)
+            {
+                isChasing = false;
+                curentMovementSpeed = 0;
+                canDoSomething = false;
+                canShoot = false;
+                Invoke(nameof(Shoot), attackCastTime);
+                Invoke(nameof(LetShootAgain), attackCastTime + attackCooldown);
+                //Debug.Log("Preparing shoot...");
+            }
+            else
+            {
+                curentMovementSpeed = 0;
+                isChasing = false;
+            }
         }
         else
         {
-            isChasing = false;
-            curentMovementSpeed = 0;
+            if (canDoSomething && !(isRanged && distanceFromTarget > runAwayZone && distanceFromTarget <= endOfSafeZone))
+            {
+                curentMovementSpeed = (int)(movementSpeed * 0.75);
+                isChasing = true;
+            }
+            else if (isRanged && canShoot && distanceFromTarget <= endOfSafeZone)
+            {
+                isChasing = false;
+                curentMovementSpeed = 0;
+                canDoSomething = false;
+                canShoot = false;
+                Invoke(nameof(Shoot), attackCastTime);
+                Invoke(nameof(LetShootAgain), attackCastTime + attackCooldown);
+                //Debug.Log("Preparing shoot...");
+            }
+            else
+            {
+                curentMovementSpeed = 0;
+                isChasing = false;
+            }
         }
 
         if (path == null)
@@ -151,7 +200,7 @@ public class EnemyAi : MonoBehaviour
     {
         if (isDamageFromMelee || (isRanged && distanceFromTarget <= runAwayZone))
         {
-            direction = (transform.position - source.position).normalized;
+            direction = (transform.position - player.position).normalized;
             force = direction * playerResources.knockbackForce;
             gameObject.GetComponent<Rigidbody2D>().AddForce(force);
         }

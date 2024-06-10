@@ -6,6 +6,8 @@ public class ProjectilesScript : MonoBehaviour
 {
     private AudioMenager AudioMenager;
     private PlayerResources playerResources;
+    private EnemyAi enemyAi;
+    private fountainHp fountainHp;
 
     [SerializeField] private int speed;
     [SerializeField] int dmg;
@@ -16,16 +18,24 @@ public class ProjectilesScript : MonoBehaviour
     private Vector2 force;
     private Vector2 direction;
 
-    private void Awake()
+    public GameObject shooter;
+
+    private void Start()
     {
         Invoke(nameof(DestroyProjectile), lifeTime);
 
         AudioMenager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioMenager>();
         playerResources = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerResources>();
+        fountainHp = GameObject.FindGameObjectWithTag("Fountain").GetComponent<fountainHp>();
+
+        if (shooter != null)
+        {
+            enemyAi = shooter.GetComponent<EnemyAi>();
+        }
 
         if (gameObject.tag == "Fireball")
         {
-            target = GameObject.FindGameObjectWithTag("Player").transform;
+            target = enemyAi.target;
         }
         else if (gameObject.tag == "Arrow")
         {
@@ -50,6 +60,10 @@ public class ProjectilesScript : MonoBehaviour
                 playerResources.TakeDamage(dmg);
                 force = direction * knockbackForce;
                 collision.gameObject.GetComponent<Rigidbody2D>().AddForce(force);
+            }
+            else if (collision.gameObject.CompareTag("Fountain"))
+            {
+                fountainHp.TakeDamage(dmg);
             }
         }
         else if (gameObject.tag == "Arrow")
