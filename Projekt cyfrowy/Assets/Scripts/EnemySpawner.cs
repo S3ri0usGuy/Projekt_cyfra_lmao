@@ -9,34 +9,51 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private GameObject rangedEnemyPrefab;
     [SerializeField] private GameObject assasinEnemyPrefab;
     [SerializeField] private GameObject sniperEnemyPrefab;
-    [SerializeField] private float spawnInterval;
     [SerializeField] private int spawnOrder;
-    private int wave = 1;
+
+    private float SpawnInterval;
+    private int wave;
 
     private PlayerResources playerResources;
 
     void Start()
     {
         playerResources = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerResources>();
-        StartCoroutine(SpawnEnemies());
     }
 
-    IEnumerator SpawnEnemies()
+    public void SpawnEnemies(int thisWave, float thisSpawnInterval)
     {
-        while (true)
+        SpawnInterval = thisSpawnInterval;
+        wave = thisWave;
+        RepeatSpawning();
+    }
+
+    private void RepeatSpawning()
+    {
+        if (playerResources.isNight)
         {
-            if (playerResources.isNight) SpawnEnemy();
-            yield return new WaitForSeconds(spawnInterval);
+            Debug.Log("Spawn: " + SpawnInterval);
+            Debug.Log("wayve: " + wave);
+
+            SpawnEnemy();
+            Invoke("RepeatSpawning", SpawnInterval);
         }
     }
 
-    void SpawnEnemy()
+    public void StopSpawning()
     {
-        if (wave >= 4) wave = 1;
-        else wave++;
+        CancelInvoke("RepeatSpawning");
+    }
 
+    private void SpawnEnemy()
+    {
+        wave++;
+        if (wave >= 5) wave = 1;
         if (wave != spawnOrder) return;
-        switch(playerResources.day)
+
+        Debug.Log("Spawn!");
+
+        switch (playerResources.day)
         {
             case 1:
                 Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee

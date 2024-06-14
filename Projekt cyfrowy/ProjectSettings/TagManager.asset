@@ -16,6 +16,10 @@ TagManager:
   - Wepon
   - Fountain
   - Kit
+  - Spawner
+  - Scene2
+  - SceneTrigger
+  - SceneTrigger2
   layers:
   - Default
   - TransparentFX

@@ -25,7 +25,9 @@ public class menuScript : MonoBehaviour
     }
     public void StartGame()
     {
-        PlayerPrefs.SetInt("Day", 1);
+        PlayerPrefs.DeleteKey("isNight");
+        PlayerPrefs.SetInt("Day", 0);
+        PlayerPrefs.SetInt("plotStage", 1);
         SceneManager.LoadScene(1);
     }
 

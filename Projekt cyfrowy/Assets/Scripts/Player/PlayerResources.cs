@@ -9,7 +9,8 @@ using UnityEngine.SceneManagement;
 public class PlayerResources : MonoBehaviour
 {
     [SerializeField] int baseHp, baseActions;
-    int hp, actions;
+    int hp;
+    public int actions;
 
     public bool isNight = false;
     [SerializeField] private float nightTime;
@@ -25,6 +26,8 @@ public class PlayerResources : MonoBehaviour
     private Vector3 targetRotation;
 
     private Abilities abilities;
+    private GameObject[] enemySpawnerArray = new GameObject[12];
+    private EnemySpawner[] enemySpawner = new EnemySpawner[12];
 
     SpriteRenderer spriteRenderer;
     [SerializeField] private float getHitAnimationTime;
@@ -42,22 +45,39 @@ public class PlayerResources : MonoBehaviour
     [SerializeField] private float repelRadius;
     [SerializeField] private float repelForce;
 
-    private void Awake()
+    [SerializeField] private float enemySpawnInterval;
+
+    [SerializeField] private GameObject NPC1, NPC2, NPC3, NPC4;
+
+    private void Start()
     {
         AudioMenager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioMenager>();
-        abilities = GameObject.FindGameObjectWithTag("Player").GetComponent<Abilities>();
+        abilities = GetComponent<Abilities>();
         fountainHp = GameObject.FindGameObjectWithTag("Fountain").GetComponent<fountainHp>();
+        enemySpawnerArray = GameObject.FindGameObjectsWithTag("Spawner");
+        for (int i = 0; i < 12; i++)
+        {
+            enemySpawner[i] = enemySpawnerArray[i].GetComponent<EnemySpawner>();
+        }
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        nightTimeLeft = nightTime;
+        actions = baseActions;
 
         if (PlayerPrefs.HasKey("Day"))
         {
             day = PlayerPrefs.GetInt("Day");
         }
 
-        hp = baseHp;
+        if (PlayerPrefs.HasKey("isNight"))
+        {
+            isNight = true;
+            abilities.CastTeleport();
+            actions = 0;
+            day += 2;
+        }
 
-        nightTimeLeft = nightTime;
-        actions = baseActions;
+        hp = baseHp;
 
         if (!isNight)
         {
@@ -219,12 +239,37 @@ public class PlayerResources : MonoBehaviour
         fountainHpField.SetActive(isNight);
         if (!isNight)
         {
+            day++;
             dayCounter.text = "Day: " + day;
+            for (int i = 0; i < 12; i++)
+            {
+                enemySpawner[i].StopSpawning();
+            }
+            abilities.ability1.SetActive(false);
+            abilities.ability2.SetActive(false);
+            abilities.ability3.SetActive(false);
+            NPC1.SetActive(true);
+            NPC2.SetActive(true);
+            NPC3.SetActive(true);
+            NPC4.SetActive(true);
         }
         else
         {
-            day++;
+            int wave = UnityEngine.Random.Range(1, 5);
+            float thisDayEnemySpawnInterval = (day * enemySpawnInterval + enemySpawnInterval) / 2;
+            for (int i = 0; i < 12; i++)
+            {
+                enemySpawner[i].SpawnEnemies(wave, thisDayEnemySpawnInterval);
+            }
             dayCounter.text = "Night: " + day;
+            PlayerPrefs.SetInt("isNight", 1);
+            abilities.ability1.SetActive(true);
+            if (abilities.playerHasability2) abilities.ability2.SetActive(true);
+            if (abilities.playerHasability3) abilities.ability3.SetActive(true);
+            NPC1.SetActive(false);
+            NPC2.SetActive(false);
+            NPC3.SetActive(false);
+            NPC4.SetActive(false);
         }
         hp = baseHp;
         fountainHp.hp = fountainHp.baseHp;

@@ -16,6 +16,9 @@ public class Abilities : MonoBehaviour
     [SerializeField] private TextMeshProUGUI ability1CooldownText;
     [SerializeField] private TextMeshProUGUI ability2CooldownText;
     [SerializeField] private TextMeshProUGUI ability3CooldownText;
+    [SerializeField] public GameObject ability1;
+    [SerializeField] public GameObject ability2;
+    [SerializeField] public GameObject ability3;
     [SerializeField] private GameObject ability1Faded;
     [SerializeField] private GameObject ability2Faded;
     [SerializeField] private GameObject ability3Faded;
@@ -25,7 +28,8 @@ public class Abilities : MonoBehaviour
     [SerializeField] private GameObject swordInterface;
     [SerializeField] private GameObject bowInterface;
 
-    private bool ability1IsOnCooldown, ability2IsOnCooldown, ability3IsOnCooldown, playerHasBow, playerHoldSword, canSwitch;
+    private bool ability1IsOnCooldown, ability2IsOnCooldown, ability3IsOnCooldown, playerHoldSword, canSwitch;
+    public bool playerHasability2, playerHasability3, playerHasBow;
 
     private PlayerMovement playerMovement;
     private PlayerResources playerResources;
@@ -47,8 +51,8 @@ public class Abilities : MonoBehaviour
         ability1IsOnCooldown = false;
         ability2IsOnCooldown = false;
         ability3IsOnCooldown = false;
-        playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
-        playerResources = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerResources>();
+        playerMovement = GetComponent<PlayerMovement>();
+        playerResources = GetComponent<PlayerResources>();
         baseMovementSpeed = playerMovement._moveSpeed;
         barrier = GameObject.FindGameObjectWithTag("Barrier");
         barrier.SetActive(false);
@@ -60,7 +64,12 @@ public class Abilities : MonoBehaviour
         ability2Faded.SetActive(false);
         ability3Faded.SetActive(false);
 
-        playerHasBow = true;
+        ability1.SetActive(false);
+        ability2.SetActive(false);
+        ability3.SetActive(false);
+        playerHasability2 = false;
+        playerHasability3 = false;
+        playerHasBow = false;
 
         playerHoldSword = true;
         bow.SetActive(!playerHoldSword);
@@ -90,7 +99,7 @@ public class Abilities : MonoBehaviour
 
     public void Ability1()
     {
-        if (!ability1IsOnCooldown)
+        if (!ability1IsOnCooldown && playerResources.isNight)
         {
             movementSpeedBoost();
             ability1IsOnCooldown = true;
@@ -101,7 +110,7 @@ public class Abilities : MonoBehaviour
 
     public void Ability2()
     {
-        if (!ability2IsOnCooldown)
+        if (!ability2IsOnCooldown && playerResources.isNight && playerHasability2)
         {
             castBarrier();
             ability2IsOnCooldown = true;
@@ -112,7 +121,7 @@ public class Abilities : MonoBehaviour
 
     public void Ability3()
     {
-        if (!ability3IsOnCooldown)
+        if (!ability3IsOnCooldown && playerResources.isNight && playerHasability3)
         {
             animator.SetTrigger("StartTeleport");
             ability3IsOnCooldown = true;
@@ -153,7 +162,6 @@ public class Abilities : MonoBehaviour
         else
         {
             ResumeGame();
-
         }
     }
 
@@ -201,7 +209,7 @@ public class Abilities : MonoBehaviour
         CastTeleport();
     }
 
-    private void CastTeleport()
+    public void CastTeleport()
     {
         gameObject.transform.position = teleportDestiny.position;
     }

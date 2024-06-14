@@ -14,21 +14,43 @@ public class fountainHp : MonoBehaviour
     [SerializeField] private float getHitAnimationTime;
     [SerializeField] private float repelRadius;
     [SerializeField] private float repelForce;
+    [SerializeField] private int HpRegenAmount;
+    [SerializeField] private float HpRegenFrequency;
+
+    private bool canRegen = true;
 
     private void Awake()
     {
-        ChangeHP();
-
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         hp = baseHp;
+    }
+
+    private void Update()
+    {
+        if (hp < baseHp && canRegen)
+        {
+            canRegen = false;
+            Invoke("RegenHP", HpRegenFrequency);
+        }
+        else if (hp >= baseHp)
+        {
+            hp = baseHp;
+            CancelInvoke("RegenHP");
+        }
+        ChangeHP();
+    }
+
+    public void RegenHP()
+    {
+        hp += HpRegenAmount;
+        canRegen = true;
     }
 
     public void TakeDamage(int damage)
     {
         hp -= damage;
         damageAnimation();
-        ChangeHP();
         if (hp <= 0)
         {
             Invoke(nameof(RestartGame), 1f);
@@ -70,6 +92,6 @@ public class fountainHp : MonoBehaviour
 
     private void damageAnimationHelper()
     {
-        spriteRenderer.color = new Color(110f / 255f, 66f / 255f, 120f / 255f, 1f);
+        spriteRenderer.color = Color.white;
     }
 }
