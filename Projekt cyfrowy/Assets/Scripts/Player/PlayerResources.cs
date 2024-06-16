@@ -74,7 +74,7 @@ public class PlayerResources : MonoBehaviour
             isNight = true;
             abilities.CastTeleport();
             actions = 0;
-            day += 2;
+            //day += 2;
         }
 
         hp = baseHp;
@@ -275,6 +275,7 @@ public class PlayerResources : MonoBehaviour
         fountainHp.hp = fountainHp.baseHp;
         ChangeHP();
         fountainHp.ChangeHP();
+        fountainHp.canRegen = true;
         PlayerPrefs.SetInt("Day", day);
     }
 

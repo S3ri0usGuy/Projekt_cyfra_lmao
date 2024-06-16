@@ -23,11 +23,20 @@ public class menuScript : MonoBehaviour
             SetVolume();
         }
     }
-    public void StartGame()
+
+    public void RestartGame()
     {
         PlayerPrefs.DeleteKey("isNight");
+        PlayerPrefs.DeleteKey("playerHasBow");
+        PlayerPrefs.DeleteKey("playerHasability2");
+        PlayerPrefs.DeleteKey("playerHasability3");
         PlayerPrefs.SetInt("Day", 0);
         PlayerPrefs.SetInt("plotStage", 1);
+        SceneManager.LoadScene(1);
+    }
+
+    public void CountinueGame()
+    {
         SceneManager.LoadScene(1);
     }
 

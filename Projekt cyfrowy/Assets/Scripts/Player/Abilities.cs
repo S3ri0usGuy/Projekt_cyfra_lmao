@@ -46,7 +46,7 @@ public class Abilities : MonoBehaviour
 
     private bool isPaused = false;
 
-    void Awake()
+    void Start()
     {
         ability1IsOnCooldown = false;
         ability2IsOnCooldown = false;
@@ -64,12 +64,15 @@ public class Abilities : MonoBehaviour
         ability2Faded.SetActive(false);
         ability3Faded.SetActive(false);
 
-        ability1.SetActive(false);
-        ability2.SetActive(false);
-        ability3.SetActive(false);
-        playerHasability2 = false;
-        playerHasability3 = false;
-        playerHasBow = false;
+        if (PlayerPrefs.HasKey("playerHasability2")) playerHasability2 = true;
+        else playerHasability2 = false;
+        if (PlayerPrefs.HasKey("playerHasability3")) playerHasability3 = true;
+        else playerHasability3 = false;
+        if (PlayerPrefs.HasKey("playerHasBow")) playerHasBow = true;
+        else playerHasBow = false;
+        ability1.SetActive(playerResources.isNight);
+        ability2.SetActive(playerHasability2);
+        ability3.SetActive(playerHasability3);
 
         playerHoldSword = true;
         bow.SetActive(!playerHoldSword);

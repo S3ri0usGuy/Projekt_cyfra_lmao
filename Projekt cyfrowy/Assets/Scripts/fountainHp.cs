@@ -17,10 +17,12 @@ public class fountainHp : MonoBehaviour
     [SerializeField] private int HpRegenAmount;
     [SerializeField] private float HpRegenFrequency;
 
-    private bool canRegen = true;
+    public bool canRegen;
 
-    private void Awake()
+    private void Start()
     {
+        canRegen = true;
+
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         hp = baseHp;

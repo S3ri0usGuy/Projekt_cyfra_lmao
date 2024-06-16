@@ -50,6 +50,25 @@ public class PlayerDialogsScript : MonoBehaviour
             plotStage = PlayerPrefs.GetInt("plotStage");
         }
 
+        switch (plotStage)
+        {
+            case 6:
+                questText.text = "Talk to the Grandpa.";
+                break;
+            case 10:
+                questText.text = "Talk to the Blacksmith.";
+                break;
+            case 12:
+                questText.text = "Talk to the Herbalist.";
+                break;
+            case 16:
+                questText.text = "Talk to anyone to skip a day.";
+                break;
+            default:
+                questText.text = "Error #1";
+                break;
+        }
+
         questField.SetActive(false);
 
         playerResources = GetComponent<PlayerResources>();
@@ -384,7 +403,7 @@ public class PlayerDialogsScript : MonoBehaviour
                     ChangePortret(1);
                     break;
                 case 4:
-                    dispalydText = "This guy making pottery? No way.";
+                    dispalydText = "<i>This guy making pottery? No way.<i>";
                     ChangePortret(1);
                     break;
                 case 5:
@@ -454,7 +473,7 @@ public class PlayerDialogsScript : MonoBehaviour
                     ChangePortret(5);
                     break;
                 case 8:
-                    dispalydText = "Uhh... Is it my turn again?";
+                    dispalydText = "<i>Uhh... Is it my turn again?<i>";
                     ChangePortret(1);
                     break;
                 case 9:
@@ -504,7 +523,7 @@ public class PlayerDialogsScript : MonoBehaviour
             switch (stage)
             {
                 case 0:
-                    dispalydText = "He's playing... so terribly...";
+                    dispalydText = "<i>He's playing... so terribly...<i>";
                     ChangePortret(1);
                     break;
                 case 1:
@@ -512,7 +531,7 @@ public class PlayerDialogsScript : MonoBehaviour
                     ChangePortret(2);
                     break;
                 case 2:
-                    dispalydText = "I think I shouldn't interrupt him...";
+                    dispalydText = "<i>I think I shouldn't interrupt him...<i>";
                     ChangePortret(1);
                     break;
                 case 3:
@@ -530,6 +549,7 @@ public class PlayerDialogsScript : MonoBehaviour
             plotStage++;
             questCount = 0;
         }
+        if (blaksmithIsDone && herbalistIsDone && musicianIsDone) Scene5Initiator();
     }
 
     public void Scene5()
@@ -800,15 +820,15 @@ public class PlayerDialogsScript : MonoBehaviour
             switch (stage)
             {
                 case 0:
-                    dispalydText = "There's only a few graves here. So this village hasn't been here for a long time.";
+                    dispalydText = "<i>There's only a few graves here. So this village hasn't been here for a long time.<i>";
                     ChangePortret(1);
                     break;
                 case 1:
-                    dispalydText = "Each of them is kept so clean. Seems like the villagers really care about their ancestors.";
+                    dispalydText = "<i>Each of them is kept so clean. Seems like the villagers really care about their ancestors.<i>";
                     ChangePortret(1);
                     break;
                 case 2:
-                    dispalydText = "Sounds like something impossible for people like me... After we die, we're forgotten.";
+                    dispalydText = "<i>Sounds like something impossible for people like me... After we die, we're forgotten.<i>";
                     ChangePortret(1);
                     break;
                 case 3:
@@ -877,9 +897,10 @@ public class PlayerDialogsScript : MonoBehaviour
                 plotStage++;
                 TogleTalking(false);
                 abilities.playerHasability2 = true;
+                PlayerPrefs.SetInt("playerHasability2", 1);
                 playerResources.UseActions(1);
                 questCount = 0;
-                questText.text = "Talk to the blacksmith.";
+                questText.text = "Talk to the Blacksmith.";
                 break;
         }
     }
@@ -893,7 +914,7 @@ public class PlayerDialogsScript : MonoBehaviour
             switch (stage)
             {
                 case 0:
-                    dispalydText = "I don't think that's blacksmith...";
+                    dispalydText = "I don't think that's Blacksmith...";
                     ChangePortret(2);
                     break;
                 case 1:
@@ -1011,7 +1032,7 @@ public class PlayerDialogsScript : MonoBehaviour
                     TogleTalking(false);
                     sceneIsDone = false;
                     playerResources.UseActions(1);
-                    questText.text = "Go back to the blacksmith.";
+                    questText.text = "Go back to the Blacksmith.";
                     break;
             }
             return;
@@ -1035,7 +1056,7 @@ public class PlayerDialogsScript : MonoBehaviour
             switch (stage)
             {
                 case 0:
-                    dispalydText = "I don't think that's blacksmith...";
+                    dispalydText = "I don't think that's Blacksmith...";
                     ChangePortret(2);
                     break;
                 case 1:
@@ -1102,6 +1123,7 @@ public class PlayerDialogsScript : MonoBehaviour
                 plotStage++;
                 TogleTalking(false);
                 abilities.playerHasBow = true;
+                PlayerPrefs.SetInt("playerHasBow", 1);
                 playerResources.UseActions(1);
                 questCount = 0;
                 questText.text = "Talk to the Herbalist.";
@@ -1339,6 +1361,7 @@ public class PlayerDialogsScript : MonoBehaviour
                 plotStage++;
                 TogleTalking(false);
                 abilities.playerHasability3 = true;
+                PlayerPrefs.SetInt("playerHasability3", 1);
                 playerResources.UseActions(1);
                 questText.text = "Talk to anyone to skip a day.";
                 break;
@@ -1371,27 +1394,27 @@ public class PlayerDialogsScript : MonoBehaviour
     private void Scene3Initiator()
     {
         if (distance1 >= triggerRadius * 2) StartScene();
-        else Invoke("Scene3Initiator", 0.5f);
+        else Invoke("Scene3Initiator", 0.2f);
     }
 
     private void Scene4dot2Initiator()
     {
         recentTalker = 2;
         if (distance2 >= triggerRadius * 2) StartScene();
-        else Invoke("Scene4dot2Initiator", 0.5f);
+        else Invoke("Scene4dot2Initiator", 0.2f);
     }
 
     private void Scene4dot3Initiator()
     {
         recentTalker = 3;
         if (distance3 >= triggerRadius * 2) StartScene();
-        else Invoke("Scene4dot3Initiator", 0.5f);
+        else Invoke("Scene4dot3Initiator", 0.2f);
     }
 
     private void Scene5Initiator()
     {
-        if ((distance2 >= triggerRadius * 3) && (distance3 >= triggerRadius * 3) && (distance4 >= triggerRadius * 3) && (distance1 >= triggerRadius * 3)) StartScene();
-        else Invoke("Scene5Initiator", 0.5f);
+        if ((distance2 >= triggerRadius * 2.6) && (distance3 >= triggerRadius * 2.6) && (distance4 >= triggerRadius * 2.6) && (distance1 >= triggerRadius * 2.6)) StartScene();
+        else Invoke("Scene5Initiator", 0.2f);
     }
 
     public void Talk()

@@ -244,7 +244,7 @@ MonoBehaviour:
   runAwayZone: 4.5
   endOfSafeZone: 8
   missile: {fileID: 4707703601900640276, guid: 8366f20053fdf1d499d1cded2bf532f8, type: 3}
-  attackCastTime: 0.65
-  attackCooldown: 0.65
+  attackCastTime: 0.8
+  attackCooldown: 0.8
   nextWaypointDistance: 1
   enemyGrapics: {fileID: 1867634365620143862}

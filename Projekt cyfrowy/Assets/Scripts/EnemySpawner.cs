@@ -32,9 +32,6 @@ public class EnemySpawner : MonoBehaviour
     {
         if (playerResources.isNight)
         {
-            Debug.Log("Spawn: " + SpawnInterval);
-            Debug.Log("wayve: " + wave);
-
             SpawnEnemy();
             Invoke("RepeatSpawning", SpawnInterval);
         }
@@ -50,8 +47,6 @@ public class EnemySpawner : MonoBehaviour
         wave++;
         if (wave >= 5) wave = 1;
         if (wave != spawnOrder) return;
-
-        Debug.Log("Spawn!");
 
         switch (playerResources.day)
         {
