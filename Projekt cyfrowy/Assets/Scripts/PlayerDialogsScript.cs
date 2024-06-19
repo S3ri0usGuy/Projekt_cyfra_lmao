@@ -348,6 +348,7 @@ public class PlayerDialogsScript : MonoBehaviour
                     break;
                 case 5:
                     TogleTalking(false);
+                    questCount++;
                     recentTalker = 0;
                     break;
             }
@@ -378,6 +379,7 @@ public class PlayerDialogsScript : MonoBehaviour
                     break;
                 case 5:
                     TogleTalking(false);
+                    questCount++;
                     recentTalker = 0;
                     break;
             }
@@ -429,8 +431,7 @@ public class PlayerDialogsScript : MonoBehaviour
                 case 10:
                     TogleTalking(false);
                     blaksmithIsDone = true;
-                    questCount++;
-                    questText.text = "Meet villagers: " + questCount + " / 3";
+                    questText.text = "Meet villagers: " + (questCount + 1) + " / 3";
                     stage = 0;
                     Scene4dot2Initiator();
                     break;
@@ -511,8 +512,7 @@ public class PlayerDialogsScript : MonoBehaviour
                 case 17:
                     TogleTalking(false);
                     herbalistIsDone = true;
-                    questCount++;
-                    questText.text = "Meet villagers: " + questCount + " / 3";
+                    questText.text = "Meet villagers: " + (questCount + 1) + " / 3";
                     stage = 0;
                     Scene4dot3Initiator();
                     break;
@@ -554,6 +554,20 @@ public class PlayerDialogsScript : MonoBehaviour
 
     public void Scene5()
     {
+        if (talker == 1 || (talker == 2 && blaksmithIsDone) || (talker == 3 && herbalistIsDone) || (talker == 4 && musicianIsDone))
+        {
+            switch (stage)
+            {
+                case 0:
+                    dispalydText = "You have already met him...";
+                    ChangePortret(2);
+                    break;
+                case 1:
+                    TogleTalking(false);
+                    break;
+            }
+            return;
+        }
         switch (stage)
         {
             case 0:
@@ -898,6 +912,7 @@ public class PlayerDialogsScript : MonoBehaviour
                 TogleTalking(false);
                 abilities.playerHasability2 = true;
                 PlayerPrefs.SetInt("playerHasability2", 1);
+                PlayerPrefs.SetInt("plotStage", plotStage);
                 playerResources.UseActions(1);
                 questCount = 0;
                 questText.text = "Talk to the Blacksmith.";
@@ -1124,6 +1139,7 @@ public class PlayerDialogsScript : MonoBehaviour
                 TogleTalking(false);
                 abilities.playerHasBow = true;
                 PlayerPrefs.SetInt("playerHasBow", 1);
+                PlayerPrefs.SetInt("plotStage", plotStage);
                 playerResources.UseActions(1);
                 questCount = 0;
                 questText.text = "Talk to the Herbalist.";
@@ -1362,6 +1378,7 @@ public class PlayerDialogsScript : MonoBehaviour
                 TogleTalking(false);
                 abilities.playerHasability3 = true;
                 PlayerPrefs.SetInt("playerHasability3", 1);
+                PlayerPrefs.SetInt("plotStage", plotStage);
                 playerResources.UseActions(1);
                 questText.text = "Talk to anyone to skip a day.";
                 break;
@@ -1413,7 +1430,7 @@ public class PlayerDialogsScript : MonoBehaviour
 
     private void Scene5Initiator()
     {
-        if ((distance2 >= triggerRadius * 2.6) && (distance3 >= triggerRadius * 2.6) && (distance4 >= triggerRadius * 2.6) && (distance1 >= triggerRadius * 2.6)) StartScene();
+        if ((distance2 >= triggerRadius * 3) && (distance3 >= triggerRadius * 3) && (distance4 >= triggerRadius * 3) && (distance1 >= triggerRadius * 3)) StartScene();
         else Invoke("Scene5Initiator", 0.2f);
     }
 

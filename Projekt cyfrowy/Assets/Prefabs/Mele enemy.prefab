@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  movementSpeed: 1100
+  movementSpeed: 1150
   baseTriggerDistance: 9
   chasingTriggerDistance: 10
   isRanged: 0

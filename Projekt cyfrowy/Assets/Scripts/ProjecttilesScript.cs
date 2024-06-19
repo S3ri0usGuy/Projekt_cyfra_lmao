@@ -73,6 +73,7 @@ public class ProjectilesScript : MonoBehaviour
                 EnemyHp enemyHp = collision.gameObject.GetComponent<EnemyHp>();
                 if (enemyHp != null)
                 {
+                    AudioMenager.PlaySFX(AudioMenager.arrowHit);
                     enemyHp.GetHit(dmg, GameObject.FindGameObjectWithTag("Player"), false);
                     force = direction * knockbackForce;
                     Debug.Log("Arrow: " + force);
@@ -80,7 +81,6 @@ public class ProjectilesScript : MonoBehaviour
                 }
             }
         }
-        AudioMenager.PlaySFX(AudioMenager.fireBallPop);
         Destroy(gameObject);
     }
 
@@ -93,7 +93,7 @@ public class ProjectilesScript : MonoBehaviour
     {
         Vector3 cursorScreenPosition = Input.mousePosition;
         Vector3 cursorWorldPosition = Camera.main.ScreenToWorldPoint(cursorScreenPosition);
-        cursorWorldPosition.z = 0; // Ustaw z na 0, poniewa¿ 2D gry zazwyczaj u¿ywaj¹ p³aszczyzny XY
+        cursorWorldPosition.z = 0;
         return cursorWorldPosition;
     }
 }

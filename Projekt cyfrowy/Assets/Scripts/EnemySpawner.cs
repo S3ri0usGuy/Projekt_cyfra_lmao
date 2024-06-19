@@ -30,10 +30,18 @@ public class EnemySpawner : MonoBehaviour
 
     private void RepeatSpawning()
     {
-        if (playerResources.isNight)
+        if (playerResources != null)
         {
-            SpawnEnemy();
-            Invoke("RepeatSpawning", SpawnInterval);
+            if (playerResources.isNight)
+            {
+                SpawnEnemy();
+                Invoke("RepeatSpawning", SpawnInterval);
+            }
+        }
+        else
+        {
+            playerResources = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerResources>();
+            RepeatSpawning();
         }
     }
 
@@ -55,12 +63,12 @@ public class EnemySpawner : MonoBehaviour
                 break;
             case 2:
                 Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
-                Instantiate(sniperEnemyPrefab, transform.position, Quaternion.identity); // sniper
+                Instantiate(rangedEnemyPrefab, transform.position, Quaternion.identity); // ranged
                 break;
             case 3:
                 Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
                 Instantiate(assasinEnemyPrefab, transform.position, Quaternion.identity); // assasin
-                Instantiate(rangedEnemyPrefab, transform.position, Quaternion.identity); // ranged
+                Instantiate(sniperEnemyPrefab, transform.position, Quaternion.identity); // sniper
                 break;
             case 4:
                 Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
@@ -70,36 +78,38 @@ public class EnemySpawner : MonoBehaviour
                 break;
             case 5:
                 Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
-                Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
-                Instantiate(rangedEnemyPrefab, transform.position, Quaternion.identity); // ranged
-                Instantiate(sniperEnemyPrefab, transform.position, Quaternion.identity); // sniper
-                Instantiate(assasinEnemyPrefab, transform.position, Quaternion.identity); // assasin
                 break;
             case 6:
                 Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
-                Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
                 Instantiate(rangedEnemyPrefab, transform.position, Quaternion.identity); // ranged
-                Instantiate(sniperEnemyPrefab, transform.position, Quaternion.identity); // sniper
-                Instantiate(assasinEnemyPrefab, transform.position, Quaternion.identity); // assasin
-                Instantiate(assasinEnemyPrefab, transform.position, Quaternion.identity); // assasin
                 break;
             case 7:
                 Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
-                Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
-                Instantiate(rangedEnemyPrefab, transform.position, Quaternion.identity); // ranged
-                Instantiate(sniperEnemyPrefab, transform.position, Quaternion.identity); // sniper
-                Instantiate(sniperEnemyPrefab, transform.position, Quaternion.identity); // sniper
                 Instantiate(assasinEnemyPrefab, transform.position, Quaternion.identity); // assasin
-                Instantiate(assasinEnemyPrefab, transform.position, Quaternion.identity); // assasin
+                Instantiate(sniperEnemyPrefab, transform.position, Quaternion.identity); // sniper
                 break;
             case 8:
                 Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
-                Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
                 Instantiate(rangedEnemyPrefab, transform.position, Quaternion.identity); // ranged
-                Instantiate(rangedEnemyPrefab, transform.position, Quaternion.identity); // ranged
-                Instantiate(sniperEnemyPrefab, transform.position, Quaternion.identity); // sniper
                 Instantiate(sniperEnemyPrefab, transform.position, Quaternion.identity); // sniper
                 Instantiate(assasinEnemyPrefab, transform.position, Quaternion.identity); // assasin
+                break;
+            case 9:
+                Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
+                break;
+            case 10:
+                Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
+                Instantiate(rangedEnemyPrefab, transform.position, Quaternion.identity); // ranged
+                break;
+            case 11:
+                Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
+                Instantiate(assasinEnemyPrefab, transform.position, Quaternion.identity); // assasin
+                Instantiate(sniperEnemyPrefab, transform.position, Quaternion.identity); // sniper
+                break;
+            case 12:
+                Instantiate(meleeEnemyPrefab, transform.position, Quaternion.identity); // melee
+                Instantiate(rangedEnemyPrefab, transform.position, Quaternion.identity); // ranged
+                Instantiate(sniperEnemyPrefab, transform.position, Quaternion.identity); // sniper
                 Instantiate(assasinEnemyPrefab, transform.position, Quaternion.identity); // assasin
                 break;
         }

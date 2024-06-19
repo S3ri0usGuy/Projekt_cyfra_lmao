@@ -5,6 +5,8 @@ using TMPro;
 
 public class Abilities : MonoBehaviour
 {
+    private AudioMenager AudioMenager;
+
     [SerializeField] private float ability1Cooldown;
     [SerializeField] private float ability2Cooldown;
     [SerializeField] private float ability3Cooldown;
@@ -51,6 +53,7 @@ public class Abilities : MonoBehaviour
         ability1IsOnCooldown = false;
         ability2IsOnCooldown = false;
         ability3IsOnCooldown = false;
+        AudioMenager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioMenager>();
         playerMovement = GetComponent<PlayerMovement>();
         playerResources = GetComponent<PlayerResources>();
         baseMovementSpeed = playerMovement._moveSpeed;
@@ -160,7 +163,6 @@ public class Abilities : MonoBehaviour
         if (isPaused)
         {
             PauseGame();
-
         }
         else
         {
@@ -170,18 +172,21 @@ public class Abilities : MonoBehaviour
 
     private void PauseGame()
     {
+        AudioMenager.PlaySFX(AudioMenager.click);
         Time.timeScale = 0f;
         PausePanel.SetActive(true);
     }
 
     private void ResumeGame()
     {
+        AudioMenager.PlaySFX(AudioMenager.click);
         Time.timeScale = 1f;
         PausePanel.SetActive(false);
     }
 
     private void movementSpeedBoost()
     {
+        AudioMenager.PlaySFX(AudioMenager.dash);
         playerMovement._moveSpeed = dashSpeed;
         Invoke("ResetMovementSpeed", dashDistance);
     }
@@ -193,6 +198,7 @@ public class Abilities : MonoBehaviour
 
     private void castBarrier()
     {
+        AudioMenager.PlaySFX(AudioMenager.barrierCast);
         playerResources.barrierIsActive = true;
         barrier.SetActive(true);
         Invoke("RemoveBarrier", barrierDuration);
@@ -215,6 +221,7 @@ public class Abilities : MonoBehaviour
     public void CastTeleport()
     {
         gameObject.transform.position = teleportDestiny.position;
+        AudioMenager.PlaySFX(AudioMenager.teleport);
     }
 
     private IEnumerator StartCooldown(float cooldown, TextMeshProUGUI cooldownText, System.Action resetAction)

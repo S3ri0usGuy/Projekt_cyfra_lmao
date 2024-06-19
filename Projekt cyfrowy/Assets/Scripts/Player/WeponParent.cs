@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class WeponParent : MonoBehaviour
 {
+    AudioMenager AudioMenager;
     Quaternion emptyQuaternion;
     Vector3 projecttileSpawnPosition;
     [SerializeField] private GameObject missile;
@@ -29,6 +30,11 @@ public class WeponParent : MonoBehaviour
 
     public Transform circleOrigin;
     public float radius;
+
+    private void Start()
+    {
+        AudioMenager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioMenager>();
+    }
 
     private void Update()
     {
@@ -88,6 +94,7 @@ public class WeponParent : MonoBehaviour
             EnemyHp enemyHp;
             if (enemyHp = collider.GetComponent<EnemyHp>())
             {
+                AudioMenager.PlaySFX(AudioMenager.meleeHit);
                 enemyHp.GetHit(2, transform.parent.gameObject, true);
             }
         }

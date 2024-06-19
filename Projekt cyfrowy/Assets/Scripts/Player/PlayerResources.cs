@@ -12,7 +12,7 @@ public class PlayerResources : MonoBehaviour
     int hp;
     public int actions;
 
-    public bool isNight = false;
+    public bool isNight;
     [SerializeField] private float nightTime;
     private float nightTimeLeft;
 
@@ -25,6 +25,7 @@ public class PlayerResources : MonoBehaviour
     [SerializeField] private GameObject pointer, dayClock, nightClock;
     private Vector3 targetRotation;
 
+    [SerializeField] private Transform teleportDestiny;
     private Abilities abilities;
     private GameObject[] enemySpawnerArray = new GameObject[12];
     private EnemySpawner[] enemySpawner = new EnemySpawner[12];
@@ -34,6 +35,7 @@ public class PlayerResources : MonoBehaviour
 
     public float knockbackForce;
     public float knockbackForceForRangedEnemies;
+    float thisDayEnemySpawnInterval;
 
     [SerializeField] private TextMeshProUGUI dayCounter;
     public int day;
@@ -60,7 +62,6 @@ public class PlayerResources : MonoBehaviour
             enemySpawner[i] = enemySpawnerArray[i].GetComponent<EnemySpawner>();
         }
         spriteRenderer = GetComponent<SpriteRenderer>();
-
         nightTimeLeft = nightTime;
         actions = baseActions;
 
@@ -68,15 +69,12 @@ public class PlayerResources : MonoBehaviour
         {
             day = PlayerPrefs.GetInt("Day");
         }
-
         if (PlayerPrefs.HasKey("isNight"))
         {
             isNight = true;
-            abilities.CastTeleport();
+            gameObject.transform.position = teleportDestiny.position;
             actions = 0;
-            //day += 2;
         }
-
         hp = baseHp;
 
         if (!isNight)
@@ -85,6 +83,8 @@ public class PlayerResources : MonoBehaviour
         }
 
         changeTimeOfDay();
+
+        AudioMenager.PlayAmbient();
     }
 
     private void Update()
@@ -123,7 +123,7 @@ public class PlayerResources : MonoBehaviour
             ChangeHP();
             if (hp <= 0)
             {
-                AudioMenager.PlaySFX(AudioMenager.death);
+                AudioMenager.PlaySFX(AudioMenager.playerDeath);
                 Invoke(nameof(RestartGame), 1f);
             }
         }
@@ -214,10 +214,6 @@ public class PlayerResources : MonoBehaviour
             actions -= amount;
             ChangeAction();
         }
-        else
-        {
-            Debug.Log("You don't have enought time!");
-        }
 
         if (actions <= 0)
         {
@@ -252,15 +248,11 @@ public class PlayerResources : MonoBehaviour
             NPC2.SetActive(true);
             NPC3.SetActive(true);
             NPC4.SetActive(true);
+            AudioMenager.PlayDayMusic();
         }
         else
         {
-            int wave = UnityEngine.Random.Range(1, 5);
-            float thisDayEnemySpawnInterval = (day * enemySpawnInterval + enemySpawnInterval) / 2;
-            for (int i = 0; i < 12; i++)
-            {
-                enemySpawner[i].SpawnEnemies(wave, thisDayEnemySpawnInterval);
-            }
+            Invoke("SpawningHelper", 1f);
             dayCounter.text = "Night: " + day;
             PlayerPrefs.SetInt("isNight", 1);
             abilities.ability1.SetActive(true);
@@ -270,6 +262,7 @@ public class PlayerResources : MonoBehaviour
             NPC2.SetActive(false);
             NPC3.SetActive(false);
             NPC4.SetActive(false);
+            AudioMenager.PlayNightMusic();
         }
         hp = baseHp;
         fountainHp.hp = fountainHp.baseHp;
@@ -301,10 +294,23 @@ public class PlayerResources : MonoBehaviour
         }
     }
 
+    private void SpawningHelper()
+    {
+        int wave = UnityEngine.Random.Range(1, 13);
+        if (day <= 4) thisDayEnemySpawnInterval = enemySpawnInterval + (enemySpawnInterval * (day - 1) * 0.85f);
+        else if (day <= 8) thisDayEnemySpawnInterval = (enemySpawnInterval + (enemySpawnInterval * (day - 5) * 0.85f)) * 0.8f;
+        else thisDayEnemySpawnInterval = (enemySpawnInterval + (enemySpawnInterval * (day - 9) * 0.85f)) * 0.64f;
+        for (int i = 0; i < 12; i++)
+        {
+            enemySpawner[i].SpawnEnemies(wave, thisDayEnemySpawnInterval);
+        }
+    }
+    
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Kit"))
         {
+            AudioMenager.PlaySFX(AudioMenager.kitPickUp);
             HealDamage(1);
             Destroy(other.gameObject);
         }

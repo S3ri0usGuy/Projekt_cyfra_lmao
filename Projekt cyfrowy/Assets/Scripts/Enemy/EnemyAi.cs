@@ -151,7 +151,7 @@ public class EnemyAi : MonoBehaviour
         {
             if (canDoSomething && !(isRanged && distanceFromTarget > runAwayZone && distanceFromTarget <= endOfSafeZone))
             {
-                curentMovementSpeed = (int)(movementSpeed * 0.75);
+                curentMovementSpeed = movementSpeed;
                 isChasing = true;
             }
             else if (isRanged && canShoot && distanceFromTarget <= endOfSafeZone)
@@ -202,6 +202,7 @@ public class EnemyAi : MonoBehaviour
         {
             direction = (transform.position - player.position).normalized;
             force = direction * playerResources.knockbackForce;
+            if (isRanged) force *= 0.75f;
             gameObject.GetComponent<Rigidbody2D>().AddForce(force);
         }
     }

@@ -147,7 +147,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 0.6
+  m_Mass: 0.5
   m_LinearDrag: 5
   m_AngularDrag: 0
   m_GravityScale: 0
@@ -174,8 +174,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acfe824126511f94d911f0545315a578, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 2
-  currentHealth: 2
+  maxHealth: 4
+  currentHealth: 4
   OnHitWithReference:
     m_PersistentCalls:
       m_Calls: []
@@ -237,14 +237,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  movementSpeed: 400
+  movementSpeed: 450
   baseTriggerDistance: 9
   chasingTriggerDistance: 10
   isRanged: 1
   runAwayZone: 4.5
   endOfSafeZone: 8
   missile: {fileID: 4707703601900640276, guid: 8366f20053fdf1d499d1cded2bf532f8, type: 3}
-  attackCastTime: 0.8
-  attackCooldown: 0.8
+  attackCastTime: 0.85
+  attackCooldown: 0.85
   nextWaypointDistance: 1
   enemyGrapics: {fileID: 1867634365620143862}

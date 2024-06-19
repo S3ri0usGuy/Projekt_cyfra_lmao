@@ -45,13 +45,12 @@ public class EnemyHp : MonoBehaviour
 
         if (currentHealth > 0)
         {
-            audioMenager.PlaySFX(audioMenager.hit);
             OnHitWithReference?.Invoke(sender);
         }
         else
         {
             OnDeathWithReference?.Invoke(sender);
-            audioMenager.PlaySFX(audioMenager.kill);
+            audioMenager.PlaySFX(audioMenager.enemyKill);
             isDead = true;
             Instantiate(drop, gameObject.transform.position, emptyQuaternion);
             Destroy(gameObject);

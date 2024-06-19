@@ -6,11 +6,13 @@ using UnityEngine.SceneManagement;
 
 public class fountainHp : MonoBehaviour
 {
+    AudioMenager AudioMenager;
+    SpriteRenderer spriteRenderer;
+
     public int baseHp;
     public int hp;
     [SerializeField] TextMeshProUGUI HpText;
 
-    SpriteRenderer spriteRenderer;
     [SerializeField] private float getHitAnimationTime;
     [SerializeField] private float repelRadius;
     [SerializeField] private float repelForce;
@@ -18,12 +20,17 @@ public class fountainHp : MonoBehaviour
     [SerializeField] private float HpRegenFrequency;
 
     public bool canRegen;
+    private Vector3 repelCenter;
+    [SerializeField] private float repelCenterFix;
 
     private void Start()
     {
-        canRegen = true;
-
+        AudioMenager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioMenager>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        repelCenter = transform.position - new Vector3(0, repelCenterFix, 0);
+
+        canRegen = true;
 
         hp = baseHp;
     }
@@ -51,6 +58,7 @@ public class fountainHp : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        AudioMenager.PlaySFX(AudioMenager.fountainDamage);
         hp -= damage;
         damageAnimation();
         if (hp <= 0)
@@ -61,6 +69,7 @@ public class fountainHp : MonoBehaviour
 
     public void RestartGame()
     {
+        AudioMenager.PlaySFX(AudioMenager.playerDeath);
         SceneManager.LoadScene(1);
     }
 
@@ -71,7 +80,7 @@ public class fountainHp : MonoBehaviour
 
     public void RepelEnemies()
     {
-        Collider2D[] enemiesToRepel = Physics2D.OverlapCircleAll(transform.position, repelRadius);
+        Collider2D[] enemiesToRepel = Physics2D.OverlapCircleAll(repelCenter, repelRadius);
         foreach (var enemy in enemiesToRepel)
         {
             if (enemy.CompareTag("Enemy"))

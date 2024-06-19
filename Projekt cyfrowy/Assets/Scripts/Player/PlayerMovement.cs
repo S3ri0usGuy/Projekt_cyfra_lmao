@@ -85,7 +85,7 @@ public class PlayerMovement : MonoBehaviour
         abilities.TogglePause();
     }
 
-    private void Awake()
+    private void Start()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();

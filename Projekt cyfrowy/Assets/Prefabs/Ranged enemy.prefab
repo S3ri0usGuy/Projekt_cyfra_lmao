@@ -174,8 +174,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acfe824126511f94d911f0545315a578, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 4
-  currentHealth: 4
+  maxHealth: 2
+  currentHealth: 2
   OnHitWithReference:
     m_PersistentCalls:
       m_Calls: []
@@ -237,14 +237,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  movementSpeed: 500
+  movementSpeed: 550
   baseTriggerDistance: 9
   chasingTriggerDistance: 10
   isRanged: 1
   runAwayZone: 4.5
   endOfSafeZone: 8
   missile: {fileID: 1354539983295518931, guid: 68e10000599fd0e4ca3257da4c8c4d2d, type: 3}
-  attackCastTime: 0.6
-  attackCooldown: 0.6
+  attackCastTime: 0.4
+  attackCooldown: 0.4
   nextWaypointDistance: 1
   enemyGrapics: {fileID: 6003499925733746553}
