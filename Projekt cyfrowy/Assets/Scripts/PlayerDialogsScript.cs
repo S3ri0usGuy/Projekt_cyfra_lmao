@@ -176,7 +176,7 @@ public class PlayerDialogsScript : MonoBehaviour
                 TogleTalking(false);
                 plotStage++;
                 questField.SetActive(true);
-                questText.text = "Tlak to the Grandpa.";
+                questText.text = "Talk to the Grandpa.";
                 stage = 0;
                 break;
         }
