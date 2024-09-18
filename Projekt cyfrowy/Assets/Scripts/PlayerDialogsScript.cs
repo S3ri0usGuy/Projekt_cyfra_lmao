@@ -176,7 +176,7 @@ public class PlayerDialogsScript : MonoBehaviour
                 TogleTalking(false);
                 plotStage++;
                 questField.SetActive(true);
-                questText.text = "Tlak to the Grandpa.";
+                questText.text = "Talk to the Grandpa.";
                 stage = 0;
                 break;
         }
@@ -482,7 +482,7 @@ public class PlayerDialogsScript : MonoBehaviour
                     ChangePortret(2);
                     break;
                 case 10:
-                    dispalydText = "So… What do you do in the village?";
+                    dispalydText = "Soï¿½ What do you do in the village?";
                     ChangePortret(1);
                     break;
                 case 11:
@@ -1256,7 +1256,7 @@ public class PlayerDialogsScript : MonoBehaviour
                 ChangePortret(5);
                 break;
             case 1:
-                dispalydText = "It’s fine.";
+                dispalydText = "Itï¿½s fine.";
                 ChangePortret(1);
                 break;
             case 2:
