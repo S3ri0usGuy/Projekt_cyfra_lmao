@@ -5,15 +5,23 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class menuScript : MonoBehaviour
 {
     [SerializeField] private AudioMixer myMixer;
     [SerializeField] private Slider volumeSlider;
     [SerializeField] private TextMeshProUGUI volumeText;
+    [SerializeField] private int difficulty;
+    [SerializeField] private Button EasyButton;
+    [SerializeField] private Button MediumButton;
+    [SerializeField] private Button HardButton;
+    private EventSystem eventSystem;
 
     private void Start()
     {
+        eventSystem = EventSystem.current;
+
         if (PlayerPrefs.HasKey("volume"))
         {
             LoadVolume();
@@ -21,6 +29,16 @@ public class menuScript : MonoBehaviour
         else
         {
             SetVolume();
+        }
+
+        if (PlayerPrefs.HasKey("difficulty"))
+        {
+            difficulty = PlayerPrefs.GetInt("difficulty");
+        }
+        else
+        {
+            difficulty = 2;
+            PlayerPrefs.SetInt("difficulty", difficulty);
         }
     }
 
@@ -58,5 +76,27 @@ public class menuScript : MonoBehaviour
     {
         volumeSlider.value = PlayerPrefs.GetFloat("volume");
         SetVolume();
+    }
+
+    public void ChangeDifficulty(int newDifficulty)
+    {
+        difficulty = newDifficulty;
+        PlayerPrefs.SetInt("difficulty", difficulty);
+    }
+
+    public void GetDifficulty()
+    {
+        if (difficulty == 1)
+        {
+            eventSystem.SetSelectedGameObject(EasyButton.gameObject);
+        }
+        else if (difficulty == 2)
+        {
+            eventSystem.SetSelectedGameObject(MediumButton.gameObject);
+        }
+        else
+        {
+            eventSystem.SetSelectedGameObject(HardButton.gameObject);
+        }
     }
 }

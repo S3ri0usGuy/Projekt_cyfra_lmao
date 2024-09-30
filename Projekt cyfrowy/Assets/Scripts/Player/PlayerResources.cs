@@ -296,16 +296,26 @@ public class PlayerResources : MonoBehaviour
 
     private void SpawningHelper()
     {
+        int difficulty = PlayerPrefs.GetInt("difficulty");
+        float difficultyConverter = 1f;
+
+        switch (difficulty)
+        {
+            case 1:
+                difficultyConverter = 1.68f;
+                break;
+            case 2:
+                difficultyConverter = 1.2f;
+                break;
+            case 3:
+                difficultyConverter = 0.857f;
+                break;
+        }
+
         int wave = UnityEngine.Random.Range(1, 13);
-<<<<<<< HEAD
-        if (day <= 4) thisDayEnemySpawnInterval = (enemySpawnInterval + (enemySpawnInterval * (day - 1) * 0.85f)) * 1.7f;
-        else if (day <= 8) thisDayEnemySpawnInterval = (enemySpawnInterval + (enemySpawnInterval * (day - 5) * 0.85f)) * 0.8f * 1.7f;
-        else thisDayEnemySpawnInterval = (enemySpawnInterval + (enemySpawnInterval * (day - 9) * 0.85f)) * 0.64f * 1.7f;
-=======
-        if (day <= 4) thisDayEnemySpawnInterval = (enemySpawnInterval + (enemySpawnInterval * (day - 1) * 0.85f)) * 0.65f;
-        else if (day <= 8) thisDayEnemySpawnInterval = (enemySpawnInterval + (enemySpawnInterval * (day - 5) * 0.85f)) * 0.8f * 0.65f;
-        else thisDayEnemySpawnInterval = (enemySpawnInterval + (enemySpawnInterval * (day - 9) * 0.85f)) * 0.64f * 0.65f;
->>>>>>> 64c36f502349da679bf63173700d173b7ce109fc
+        if (day <= 4) thisDayEnemySpawnInterval = (enemySpawnInterval + (enemySpawnInterval * (day - 1) * 0.85f)) * difficultyConverter;
+        else if (day <= 8) thisDayEnemySpawnInterval = (enemySpawnInterval + (enemySpawnInterval * (day - 5) * 0.85f)) * 0.8f * difficultyConverter;
+        else thisDayEnemySpawnInterval = (enemySpawnInterval + (enemySpawnInterval * (day - 9) * 0.85f)) * 0.64f * difficultyConverter;
         for (int i = 0; i < 12; i++)
         {
             enemySpawner[i].SpawnEnemies(wave, thisDayEnemySpawnInterval);
